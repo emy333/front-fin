@@ -2,7 +2,7 @@
 const Login: React.FC = () => {
     return (
         <>
-            <p>Teste</p>
+            <p>Teste</p> 
         </>
     )
 }
