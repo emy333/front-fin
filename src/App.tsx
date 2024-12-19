@@ -6,10 +6,10 @@ function App() {
 
   return (
     <MainLayout>
-      <p>Tetse</p>
+      <p>Teste</p>
     </MainLayout>
 
-  )
+  ) 
 }
 
 export default App
