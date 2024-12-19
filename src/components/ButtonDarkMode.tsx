@@ -1,26 +1,48 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button"
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
 import { GoSun } from "react-icons/go";
 import { BsMoonStars } from "react-icons/bs";
 
-const ButtonDark = () => {
+interface ButtonDarkProps {
+    setIsDark: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
-    const [isDark, setIsDark] = useState(false);
+const ButtonDark = ({ setIsDark }: ButtonDarkProps) => {
+    const [isDark, setLocalIsDark] = useState(false);
+
+    useEffect(() => {
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme) {
+            setLocalIsDark(savedTheme === "dark");
+        } else {
+            const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+            setLocalIsDark(prefersDark);
+        }
+    }, []);
 
     const handleDarkMode = () => {
-        setIsDark(!isDark);
-        if (isDark) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    }
+        const newTheme = !isDark ? "dark" : "light";
+        setLocalIsDark(!isDark);
+        localStorage.setItem("theme", newTheme);
+        document.documentElement.classList.toggle("dark", !isDark);
+        setIsDark(!isDark);  
+    };
 
     return (
-        <Button variant={'outline'} onClick={handleDarkMode}>
-            {isDark ? <><BsMoonStars className="mr-1" />Modo Escuro</> : <><GoSun className="mr-1" />Modo Claro</>}
+        <Button variant={"outline"} onClick={handleDarkMode}>
+            {isDark ? (
+                <>
+                    <GoSun className="mr-1" />
+                    Modo Claro
+                </>
+            ) : (
+                <>
+                    <BsMoonStars className="mr-1" />
+                    Modo Escuro
+                </>
+            )}
         </Button>
     );
-}
+};
 
 export default ButtonDark;
