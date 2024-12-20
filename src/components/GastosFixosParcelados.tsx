@@ -33,7 +33,7 @@ const GatosFixosParcelados = () => {
 
     return (
 
-        <div className="flex flex-col h-[50vh] border rounded-lg">
+        <div className="flex flex-col h-full border rounded-lg">
             <div className="flex-1 overflow-auto">
                 <Table className="table-fixed w-full">
                     <TableHeader className="sticky top-0 z-10 bg-background border-b-2 border-gray-200">

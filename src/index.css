@@ -70,3 +70,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+.no-underline {
+  text-decoration: none !important;
+}

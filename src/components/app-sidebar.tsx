@@ -16,15 +16,15 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/",
     },
     {
       title: "Entradas",
-      url: "#",
+      url: "/",
     },
     {
       title: "Saídas",
-      url: "#",
+      url: "/saidas",
     },
 
   ],

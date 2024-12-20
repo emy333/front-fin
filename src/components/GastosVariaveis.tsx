@@ -22,9 +22,9 @@ const GatosVariaveis = () => {
         { invoice: "INV001", paymentStatus: "Paid", totalAmount: "$250.00", paymentMethod: "Credit Card" },
         { invoice: "INV002", paymentStatus: "Pending", totalAmount: "$150.00", paymentMethod: "PayPal" },
         { invoice: "INV003", paymentStatus: "Unpaid", totalAmount: "$350.00", paymentMethod: "Bank Transfer" },
-        { invoice: "INV003", paymentStatus: "Unpaid", totalAmount: "$350.00", paymentMethod: "Bank Transfer" },
-        { invoice: "INV003", paymentStatus: "Unpaid", totalAmount: "$350.00", paymentMethod: "Bank Transfer" },
-        { invoice: "INV003", paymentStatus: "Unpaid", totalAmount: "$350.00", paymentMethod: "Bank Transfer" },
+        { invoice: "INV004", paymentStatus: "Unpaid", totalAmount: "$350.00", paymentMethod: "Bank Transfer" },
+        { invoice: "INV005", paymentStatus: "Unpaid", totalAmount: "$350.00", paymentMethod: "Bank Transfer" },
+        { invoice: "INV006", paymentStatus: "Unpaid", totalAmount: "$350.00", paymentMethod: "Bank Transfer" },
 
     ];
 
@@ -39,7 +39,7 @@ const GatosVariaveis = () => {
 
 
 
-        <div className="flex flex-col h-[50vh] border rounded-lg">
+        <div className="flex flex-col h-full border rounded-lg">
             <div className="flex-1 overflow-auto">
                 <Table className="table-fixed w-full">
                     <TableHeader className="sticky top-0 z-10 bg-background border-b-2 border-gray-200">
