@@ -8,7 +8,11 @@ const Dashboard = () => {
 
     return (
         <MainLayout>
-            <h1 className="text-[25px]">Dashboard</h1>
+            
+            <div>
+                <h1 className="text-[25px]">Dashboard</h1>
+            </div>
+            
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full mb-5">
                 <CardsResumo />
             </div>

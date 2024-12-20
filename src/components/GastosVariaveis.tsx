@@ -1,4 +1,15 @@
 
+import {
+    Table,
+    TableBody,
+    TableFooter,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table"
+
+
 interface Invoice {
     invoice: string;
     paymentStatus: string;
@@ -25,43 +36,43 @@ const GatosVariaveis = () => {
     ];
 
     return (
-        <div className="max-h-[50vh] overflow-hidden border rounded-lg flex flex-col">
-            <div className="relative overflow-x-auto flex-1">
-                <table className="w-full text-sm text-left rtl:text-right">
-                    <thead className="text-xs uppercase">
-                        <tr className="border-b-2 border-gray-300">
+
+
+
+        <div className="flex flex-col h-[50vh] border rounded-lg">
+            <div className="flex-1 overflow-auto">
+                <Table className="table-fixed w-full">
+                    <TableHeader className="sticky top-0 z-10 bg-background border-b-2 border-gray-200">
+                        <TableRow>
                             {columns.map((col) => (
-                                <th key={col.label} scope="col" className="px-6 py-3">
+                                <TableHead key={col.label} className="px-4 py-2 text-left">
                                     {col.label}
-                                </th>
+                                </TableHead>
                             ))}
-                        </tr>
-                    </thead>
-                    <tbody className="overflow-auto">
+                        </TableRow>
+                    </TableHeader>
+
+                    <TableBody>
                         {gastos.map((gasto) => (
-                            <tr key={gasto.invoice} className="border-b">
-                                {columns.map((col) => (
-                                    <td key={col.field} className="px-6 py-4">
-                                        {gasto[col.field as keyof Invoice]}
-                                    </td>
-                                ))}
-                            </tr>
+                            <TableRow key={gasto.invoice} className="border-b">
+                                <TableCell className="px-4 py-2">{gasto.invoice}</TableCell>
+                                <TableCell className="px-4 py-2">{gasto.paymentStatus}</TableCell>
+                                <TableCell className="px-4 py-2">{gasto.paymentMethod}</TableCell>
+                                <TableCell className="px-4 py-2">{gasto.totalAmount}</TableCell>
+                            </TableRow>
                         ))}
-                    </tbody>
-                    <tfoot>
-                        <tr className="sticky ">
-                            <td className="px-6 py-1 font-semibold">
-                                Total:
-                            </td>
-                            <td colSpan={2} className="px-2 py-3 font-semibold text-right">
-                            </td>
-                            <td className="px-6 py-1  font-semibold">
-                                R$ 100,00
-                            </td>
-                        </tr>
-                    </tfoot>
-                </table>
+                    </TableBody>
+                </Table>
             </div>
+
+            <Table className="table-fixed w-full">
+                <TableFooter className="bg-background border-t">
+                    <TableRow>
+                        <TableCell colSpan={3} className="px-4 py-2"></TableCell>
+                        <TableCell className="text-left px-4 py-2">$3,500.00</TableCell>
+                    </TableRow>
+                </TableFooter>
+            </Table>
         </div>
 
     );
