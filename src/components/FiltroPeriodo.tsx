@@ -15,26 +15,27 @@ interface FiltroPeriodoProps {
 
 const FiltroPeriodo: React.FC<FiltroPeriodoProps> = ({ selectedMonth, setSelectedMonth }) => {
   const options = [
-    { value: '1', label: 'Janeiro' },
-    { value: '2', label: 'Fevereiro' },
-    { value: '3', label: 'Março' },
-    { value: '4', label: 'Abril' },
-    { value: '5', label: 'Maio' },
-    { value: '6', label: 'Junho' },
-    { value: '7', label: 'Julho' },
-    { value: '8', label: 'Agosto' },
-    { value: '9', label: 'Setembro' },
+    { value: '01', label: 'Janeiro' },
+    { value: '02', label: 'Fevereiro' },
+    { value: '03', label: 'Março' },
+    { value: '04', label: 'Abril' },
+    { value: '05', label: 'Maio' },
+    { value: '06', label: 'Junho' },
+    { value: '07', label: 'Julho' },
+    { value: '08', label: 'Agosto' },
+    { value: '09', label: 'Setembro' },
     { value: '10', label: 'Outubro' },
     { value: '11', label: 'Novembro' },
     { value: '12', label: 'Dezembro' },
   ];
 
+  // Atualiza o mês selecionado apenas quando ele não estiver definido ou for "00"
   useEffect(() => {
-    if (!selectedMonth) {
-      const currentMonth = (new Date().getMonth() + 1).toString();
+    if (!selectedMonth || selectedMonth === "00") {
+      const currentMonth = (new Date().getMonth() + 1).toString().padStart(2, '0');
       setSelectedMonth(currentMonth);
     }
-  }, [selectedMonth, setSelectedMonth]);
+  }, []); // Agora depende apenas do estado inicial
 
   return (
     <Select

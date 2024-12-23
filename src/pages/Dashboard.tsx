@@ -12,8 +12,10 @@ import ResumoDividasPorCredor from "../components/ResumoDividasPorCredor";
 
 
 const Dashboard = () => {
-    const [selectedMonth, setSelectedMonth] = useState<string>("");
-
+    const [selectedMonth, setSelectedMonth] = useState<string>(() => {
+        const currentMonth = (new Date().getMonth() + 1).toString().padStart(2, '0');
+        return currentMonth;
+    });
 
     return (
         <MainLayout>
@@ -32,7 +34,8 @@ const Dashboard = () => {
             <div>
                 <h1 className="font-bold text-[18px] mb-2">Resumo</h1>
                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full mb-5">
-                    <CardsResumo />
+                    <CardsResumo selectedMonth={selectedMonth}
+                    />
                 </div>
             </div>
 
@@ -40,8 +43,6 @@ const Dashboard = () => {
             <div className="w-full">
                 <ResumoDividasPorCredor />
             </div>
-
-
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[50vh] md:min-h-[50vh] ">
                 <div className="flex flex-col h-full">

@@ -35,9 +35,9 @@ const GatosVariaveis = () => {
         { label: "Amount", field: "totalAmount" },
     ];
 
+
+    
     return (
-
-
 
         <div className="flex flex-col h-full border rounded-lg">
             <div className="flex-1 overflow-auto">
@@ -48,7 +48,7 @@ const GatosVariaveis = () => {
                                 <TableHead key={col.label} className="px-4 py-2 text-left">
                                     {col.label}
                                 </TableHead>
-                            ))}
+                            ))} 
                         </TableRow>
                     </TableHeader>
 

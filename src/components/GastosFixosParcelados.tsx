@@ -45,7 +45,6 @@ const GatosFixosParcelados = () => {
                             ))}
                         </TableRow>
                     </TableHeader>
-
                     <TableBody>
                         {gastos.map((gasto) => (
                             <TableRow key={gasto.invoice} className="border-b">
