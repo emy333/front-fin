@@ -1,76 +1,71 @@
+import { useGetGatosFixosParcelados } from "@/hooks/useGetGastosFixosParcelados";
+import { useState } from "react";
 
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-    TableFooter
-} from "@/components/ui/table"
-
-
-interface Invoice {
-    invoice: string;
-    paymentStatus: string;
-    totalAmount: string;
-    paymentMethod: string;
+interface GastosFixosParcelados {
+  descricao: string;
+  credor_descricao: string;
+  pago: boolean;
+  tipo_pagamento: string;
+  categoria: string;
+  total_parcela: string;
+  parcela_atual: string;
+  data_vencimento: string;
+  valor: number;
 }
 
-const GatosFixosParcelados = () => {
-    const gastos: Invoice[] = [
-        { invoice: "INV001", paymentStatus: "Paid", totalAmount: "$250.00", paymentMethod: "Credit Card" },
-        { invoice: "INV002", paymentStatus: "Pending", totalAmount: "$150.00", paymentMethod: "PayPal" },
-        { invoice: "INV003", paymentStatus: "Unpaid", totalAmount: "$350.00", paymentMethod: "Bank Transfer" },
-    ];
+interface dataProps {
+  selectedMonth: string;
+}
 
-    const columns = [
-        { label: "Invoice", field: "invoice" },
-        { label: "Status", field: "paymentStatus" },
-        { label: "Method", field: "paymentMethod" },
-        { label: "Amount", field: "totalAmount" },
-    ];
+const GatosFixosParcelados: React.FC<dataProps> = ({ selectedMonth }) => {
+  const [ano] = useState(new Date().getFullYear());
+  const periodo = `${selectedMonth}-${ano}`;
+  const { data, isLoading, isError } = useGetGatosFixosParcelados(periodo, 4);
 
-    return (
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error fetching data.</div>;
 
-        <div className="flex flex-col h-full border rounded-lg">
-            <div className="flex-1 overflow-auto">
-                <Table className="table-fixed w-full">
-                    <TableHeader className="sticky top-0 z-10 bg-background border-b-2 border-gray-200">
-                        <TableRow>
-                            {columns.map((col) => (
-                                <TableHead key={col.label} className="px-4 py-2 text-left">
-                                    {col.label}
-                                </TableHead>
-                            ))}
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {gastos.map((gasto) => (
-                            <TableRow key={gasto.invoice} className="border-b">
-                                <TableCell className="px-4 py-2">{gasto.invoice}</TableCell>
-                                <TableCell className="px-4 py-2">{gasto.paymentStatus}</TableCell>
-                                <TableCell className="px-4 py-2">{gasto.paymentMethod}</TableCell>
-                                <TableCell className="px-4 py-2">{gasto.totalAmount}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </div>
-
-            <Table className="table-fixed w-full">
-                <TableFooter className="bg-background border-t">
-                    <TableRow>
-                        <TableCell colSpan={3} className="px-4 py-2"></TableCell>
-                        <TableCell className="text-left px-4 py-2">$3,500.00</TableCell>
-                    </TableRow>
-                </TableFooter>
-            </Table>
-        </div>
-
-
-
-    );
+  return (
+    <div className="overflow-x-auto">
+      <table className="min-w-full table-auto text-sm">
+        <thead>
+          <tr className="bg-gray-100 dark:bg-gray-800">
+            <th className="px-4 py-2 text-left">Descrição</th>
+            <th className="px-4 py-2 text-left">Credor</th>
+            <th className="px-4 py-2 text-left">Pago?</th>
+            <th className="px-4 py-2 text-left">Tipo de Pagamento</th>
+            <th className="px-4 py-2 text-left">Total de Parcelas</th>
+            <th className="px-4 py-2 text-left">Valor</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data && data.length > 0 ? (
+            data.map((gasto: GastosFixosParcelados) => (
+              <tr
+                key={gasto.descricao}
+                className={`${gasto.pago ? "bg-green-200 dark:bg-green-800" : ""} transition duration-300`}
+              >
+                <td className="px-4 py-2">{gasto.descricao}</td>
+                <td className="px-4 py-2">{gasto.credor_descricao}</td>
+                <td className="px-4 py-2">{gasto.pago ? "Sim" : "Não"}</td>
+                <td className="px-4 py-2">{gasto.tipo_pagamento}</td>
+                <td className="px-4 py-2">
+                  {gasto.parcela_atual && gasto.total_parcela ? `${gasto.parcela_atual}/${gasto.total_parcela}` : ""}
+                </td>
+                <td className="px-4 py-2">{gasto.valor}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={6} className="text-center px-4 py-2">
+                Nenhum registro encontrado.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
 };
 
 export default GatosFixosParcelados;

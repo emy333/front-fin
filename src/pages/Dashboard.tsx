@@ -41,19 +41,41 @@ const Dashboard = () => {
 
 
             <div className="w-full">
-                <ResumoDividasPorCredor />
+                <ResumoDividasPorCredor selectedMonth={selectedMonth} />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[50vh] md:min-h-[50vh] ">
-                <div className="flex flex-col h-full">
+            <div className="flex flex-col md:flex-row gap-6 h-full">
+                <div className="flex-1 min-h-[60vh] max-h-[60vh] flex flex-col">
                     <h1 className="font-bold text-[18px] mb-2">Gastos Fixos e Parcelados</h1>
-                    <GatosFixosParcelados />
+                    <div className="flex-1 overflow-auto">
+                        <GatosFixosParcelados selectedMonth={selectedMonth} />
+                    </div>
                 </div>
-                <div className="flex flex-col h-full">
-                    <h1 className="font-bold text-[18px] mb-2">Gastos Variados</h1>
-                    <GatosVariaveis />
+
+                <div className="flex-1 min-h-[60vh] max-h-[60vh] flex flex-col">
+                    <h1 className="font-bold text-[18px] mb-2">Gastos Variáveis</h1>
+                    <div className="flex-1 overflow-auto">
+                        <GatosVariaveis selectedMonth={selectedMonth} />
+                    </div>
                 </div>
             </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         </MainLayout>
     )

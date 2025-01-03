@@ -5,12 +5,15 @@ import { useGetTotCredores } from "@/hooks/useGetTotalCredores";
 import { useState } from "react";
 import { formatCurrency } from "@/utils/formatCurrency";
 
-const ResumoDividasPorCredor = () => {
+interface dataProps {
+    selectedMonth: string;
+}
 
-    const [mes, setMes] = useState(12);
-    const [ano, setAno] = useState(2024);
+const ResumoDividasPorCredor: React.FC<dataProps> = ({ selectedMonth }) => {
 
-    const periodo = `${mes}-${ano}`;
+    const [ano] = useState(new Date().getFullYear()); 
+
+    const periodo = `${selectedMonth}-${ano}`;
 
     const { data: credores, isLoading, isError } = useGetTotCredores(periodo, 4);
 

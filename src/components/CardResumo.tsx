@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 interface dataProps {
     selectedMonth: string;
 }
-
+ 
 const CardsResumo: React.FC<dataProps> = ({ selectedMonth }) => {
     const [totOrcamento, setTotOrcamento] = useState(0);
     const [totDespesas, setTotDespesas] = useState(0);
