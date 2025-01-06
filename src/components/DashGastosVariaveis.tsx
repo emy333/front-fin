@@ -14,15 +14,12 @@ interface GastosVariaveis {
     valor: number;
 }
 
-interface dataProps {
-    selectedMonth: string;
+interface dataProps {  
+    periodo: string;
 }
+ 
+const GatosVariaveis: React.FC<dataProps> = ({ periodo }) => {
 
-const GatosVariaveis: React.FC<dataProps> = ({ selectedMonth }) => {
-
-    const [ano] = useState(new Date().getFullYear());
-
-    const periodo = `${selectedMonth}-${ano}`;
 
     const { data, isLoading, isError } = useGetGatosVariaveis(periodo, 4);
 
@@ -30,7 +27,6 @@ const GatosVariaveis: React.FC<dataProps> = ({ selectedMonth }) => {
     if (isError) return <div>Error fetching data.</div>;
 
     const totalValue = data?.reduce((acc: number, gasto: GastosVariaveis) => {
-        // Certifique-se de que o valor é numérico
         const valor = parseFloat(gasto.valor.toString());
         return acc + valor;
     }, 0) || 0;
@@ -44,7 +40,6 @@ const GatosVariaveis: React.FC<dataProps> = ({ selectedMonth }) => {
                         <th className="px-4 py-2 text-left">Credor</th>
                         <th className="px-4 py-2 text-left">Pago?</th>
                         <th className="px-4 py-2 text-left">Tipo de Pagamento</th>
-                        <th className="px-4 py-2 text-left">Total de Parcelas</th>
                         <th className="px-4 py-2 text-left">Valor</th>
                     </tr>
                 </thead>
@@ -53,19 +48,18 @@ const GatosVariaveis: React.FC<dataProps> = ({ selectedMonth }) => {
                         data.map((gasto: GastosVariaveis) => (
                             <tr
                                 key={gasto.descricao}
-                                className={`${gasto.pago ? "bg-green-200 dark:bg-green-800" : ""} transition duration-300`}
+                                className={`${gasto.pago ? "bg-green-200 dark:bg-green-700" : ""} transition duration-300`}
                             >
-                                <td className="px-4 py-2">{gasto.descricao}</td>
-                                <td className="px-4 py-2">{gasto.credor_descricao}</td>
-                                <td className="px-4 py-2">{gasto.pago ? "Sim" : "Não"}</td>
-                                <td className="px-4 py-2">{gasto.tipo_pagamento}</td>
-                                <td className="px-4 py-2">{gasto.total_parcela}</td>
+                                <td className="px-4 py-2">{gasto.descricao.toLocaleUpperCase()}</td>
+                                <td className="px-4 py-2">{gasto.credor_descricao.toLocaleUpperCase()}</td>
+                                <td className="px-4 py-2">{gasto.pago ? "SIM" : "NÃO"}</td>
+                                <td className="px-4 py-2">{gasto.tipo_pagamento.toLocaleUpperCase()}</td>
                                 <td className="px-4 py-2">{formatCurrency(gasto.valor)}</td>
                             </tr>
                         ))
                     ) : (
                         <tr>
-                            <td colSpan={6} className="text-center px-4 py-2">
+                            <td colSpan={5} className="text-center px-4 py-2">
                                 Nenhum registro encontrado.
                             </td>
                         </tr>
@@ -73,7 +67,7 @@ const GatosVariaveis: React.FC<dataProps> = ({ selectedMonth }) => {
                 </tbody>
                 <tfoot>
                     <tr className="bg-gray-100 dark:bg-gray-800">
-                        <td colSpan={5} className="text-right px-4 py-2 font-semibold">Total</td>
+                        <td colSpan={4} className="text-right px-4 py-2 font-semibold">Total</td>
                         <td className="px-4 py-2 font-semibold">{formatCurrency(totalValue)}</td>
                     </tr>
                 </tfoot>

@@ -7,28 +7,24 @@ import { getTotSaldo } from "@/utils/totSaldo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface dataProps {
-    selectedMonth: string;
+    periodo: string;
 }
- 
-const CardsResumo: React.FC<dataProps> = ({ selectedMonth }) => {
+
+
+const CardsResumo: React.FC<dataProps> = ({ periodo }) => {
     const [totOrcamento, setTotOrcamento] = useState(0);
     const [totDespesas, setTotDespesas] = useState(0);
     const [totPagas, setTotPagas] = useState(0);
     const [totSaldo, setTotSaldo] = useState(0);
 
-    const currentDate = new Date();
-    const currentYear = currentDate.getFullYear();
-
     useEffect(() => {
-
-        const date = `${currentYear}-${selectedMonth}`;
         const userId = 4;
 
         const fetchData = async () => {
-            const orçamento = await getTotOrcamento(date, userId);
-            const despesas = await getTotDespesas(date, userId);
-            const totPagas = await getTotPagas(date, userId);
-            const totSaldo = await getTotSaldo(date, userId);
+            const orçamento = await getTotOrcamento(periodo, userId);
+            const despesas = await getTotDespesas(periodo, userId);
+            const totPagas = await getTotPagas(periodo, userId);
+            const totSaldo = await getTotSaldo(periodo, userId);
 
             setTotOrcamento(orçamento);
             setTotDespesas(despesas);
@@ -38,7 +34,7 @@ const CardsResumo: React.FC<dataProps> = ({ selectedMonth }) => {
         };
 
         fetchData();
-    }, [currentYear, selectedMonth]);
+    }, [periodo]);
 
     const cardInfo = [
         {
@@ -71,13 +67,14 @@ const CardsResumo: React.FC<dataProps> = ({ selectedMonth }) => {
                 style: 'currency',
                 currency: 'BRL',
             }).format(totSaldo),
-            icon: <MdOutlineAttachMoney />
+            icon: <MdOutlineAttachMoney />,
+            isNegative: totSaldo < 0
         },
     ];
 
     return (
         <>
-            {(cardInfo.map((card, index) => (
+            {cardInfo.map((card, index) => (
                 <Card key={index}>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-[19px] font-medium">
@@ -88,11 +85,12 @@ const CardsResumo: React.FC<dataProps> = ({ selectedMonth }) => {
                         </span>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{card.value}</div>
+                        <div className={`text-2xl font-bold ${card.isNegative ? 'text-red-800' : 'text-green-700'}`}>
+                            {card.value}
+                        </div>
                     </CardContent>
                 </Card>
-            ))
-            )}
+            ))}
         </>
     );
 };

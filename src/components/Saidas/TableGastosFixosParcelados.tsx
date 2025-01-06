@@ -1,5 +1,5 @@
 import { useGetGatosFixosParcelados } from "@/hooks/useGetGastosFixosParcelados";
-import { useState } from "react";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 interface GastosFixosParcelados {
   descricao: string;
@@ -14,13 +14,17 @@ interface GastosFixosParcelados {
 }
 
 interface dataProps {
-  selectedMonth: string;
+  periodo: string;
 }
 
-const GatosFixosParcelados: React.FC<dataProps> = ({ selectedMonth }) => {
-  const [ano] = useState(new Date().getFullYear());
-  const periodo = `${selectedMonth}-${ano}`;
+const TableGastosFixosParcelados: React.FC<dataProps> = ({ periodo }) => {
+
   const { data, isLoading, isError } = useGetGatosFixosParcelados(periodo, 4);
+
+  const totalValue = data?.reduce((acc: number, gasto: GastosFixosParcelados) => {
+    const valor = parseFloat(gasto.valor.toString());
+    return acc + valor;
+  }, 0) || 0;
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error fetching data.</div>;
@@ -43,17 +47,16 @@ const GatosFixosParcelados: React.FC<dataProps> = ({ selectedMonth }) => {
             data.map((gasto: GastosFixosParcelados) => (
               <tr
                 key={gasto.descricao}
-                className={`${gasto.pago ? "bg-green-200 dark:bg-green-800" : ""} transition duration-300`}
+                className={`${gasto.pago ? "bg-green-200 dark:bg-green-700" : ""} transition duration-300`}
               >
-                <td className="px-4 py-2">{gasto.descricao}</td>
-                <td className="px-4 py-2">{gasto.credor_descricao}</td>
-                <td className="px-4 py-2">{gasto.pago ? "Sim" : "Não"}</td>
-                <td className="px-4 py-2">{gasto.tipo_pagamento}</td>
+                <td className="px-4 py-2">{gasto.descricao.toUpperCase()}</td>
+                <td className="px-4 py-2">{gasto.credor_descricao.toUpperCase()}</td>
+                <td className="px-4 py-2">{gasto.pago ? "SIM" : "NÃO"}</td>
+                <td className="px-4 py-2">{gasto.tipo_pagamento.toUpperCase()}</td>
                 <td className="px-4 py-2">
                   {parseInt(gasto.total_parcela) > 1 ? `${gasto.parcela_atual} / ${gasto.total_parcela}` : ""}
                 </td>
-
-                <td className="px-4 py-2">{gasto.valor}</td>
+                <td className="px-4 py-2">{formatCurrency(gasto.valor)}</td>
               </tr>
             ))
           ) : (
@@ -64,9 +67,15 @@ const GatosFixosParcelados: React.FC<dataProps> = ({ selectedMonth }) => {
             </tr>
           )}
         </tbody>
+        <tfoot>
+          <tr className="bg-gray-100 dark:bg-gray-800">
+            <td colSpan={5} className="text-right px-4 py-2 font-semibold">Total</td>
+            <td className="px-4 py-2 font-semibold">{formatCurrency(totalValue)}</td>
+          </tr>
+        </tfoot>
       </table>
     </div>
   );
 };
 
-export default GatosFixosParcelados;
+export default TableGastosFixosParcelados;

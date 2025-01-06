@@ -6,14 +6,10 @@ import { useState } from "react";
 import { formatCurrency } from "@/utils/formatCurrency";
 
 interface dataProps {
-    selectedMonth: string;
+    periodo: string;
 }
 
-const ResumoDividasPorCredor: React.FC<dataProps> = ({ selectedMonth }) => {
-
-    const [ano] = useState(new Date().getFullYear()); 
-
-    const periodo = `${selectedMonth}-${ano}`;
+const ResumoDividasPorCredor: React.FC<dataProps> = ({ periodo }) => {
 
     const { data: credores, isLoading, isError } = useGetTotCredores(periodo, 4);
 

@@ -11,10 +11,12 @@ import {
 interface FiltroPeriodoProps {
   selectedMonth: string;
   setSelectedMonth: (value: string) => void;
+  ano: number;
+  setAno: (value: number) => void;
 }
 
-const FiltroPeriodo: React.FC<FiltroPeriodoProps> = ({ selectedMonth, setSelectedMonth }) => {
-  const options = [
+const FiltroPeriodo: React.FC<FiltroPeriodoProps> = ({ selectedMonth, setSelectedMonth, ano, setAno }) => {
+  const optionsMonth = [
     { value: '01', label: 'Janeiro' },
     { value: '02', label: 'Fevereiro' },
     { value: '03', label: 'Março' },
@@ -29,34 +31,54 @@ const FiltroPeriodo: React.FC<FiltroPeriodoProps> = ({ selectedMonth, setSelecte
     { value: '12', label: 'Dezembro' },
   ];
 
-  // Atualiza o mês selecionado apenas quando ele não estiver definido ou for "00"
+  const optionsYear = Array.from({ length: 10 }, (_, index) => {
+    const year = new Date().getFullYear() - index;
+    return { value: year.toString(), label: year.toString() };
+  });
+
   useEffect(() => {
     if (!selectedMonth || selectedMonth === "00") {
       const currentMonth = (new Date().getMonth() + 1).toString().padStart(2, '0');
       setSelectedMonth(currentMonth);
     }
-  }, []); // Agora depende apenas do estado inicial
+  }, []);
 
   return (
-    <Select
-      value={selectedMonth}
-      onValueChange={(value) => setSelectedMonth(value)}
-    >
-      <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Selecionar Mês">
-          {options.find((option) => option.value === selectedMonth)?.label}
-        </SelectValue>
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
-          {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectGroup>
-      </SelectContent>
-    </Select>
+    <div className="flex gap-4">
+      <Select value={selectedMonth} onValueChange={(value) => setSelectedMonth(value)}>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Selecionar Mês">
+            {optionsMonth.find((option) => option.value === selectedMonth)?.label}
+          </SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            {optionsMonth.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+
+      <Select value={ano.toString()} onValueChange={(value) => setAno(Number(value))}>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Selecionar Ano">
+            {optionsYear.find((option) => option.value === ano.toString())?.label}
+          </SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            {optionsYear.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    </div>
   );
 };
 

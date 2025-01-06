@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 import MainLayout from "@/layouts/main";
 import CardsResumo from "@/components/CardResumo";
 
-import GatosFixosParcelados from "../components/GastosFixosParcelados";
-import GatosVariaveis from "../components/GastosVariaveis";
+import GatosFixosParcelados from "../components/DashGastosFixosParcelados";
+import GatosVariaveis from "../components/DashGastosVariaveis";
 import FiltroPeriodo from "@/components/FiltroPeriodo";
 
 import ResumoDividasPorCredor from "../components/ResumoDividasPorCredor";
@@ -13,28 +13,29 @@ import { useGetTotFixosParcelados } from "@/hooks/useGetTotSaidasParceladasFixas
 import { formatCurrency } from "@/utils/formatCurrency";
 
 const Dashboard = () => {
-    const [selectedMonth, setSelectedMonth] = useState<string>(() => {
+    const [selectedMonth, setSelectedMonth] = useState(() => {
         const currentMonth = (new Date().getMonth() + 1).toString().padStart(2, '0');
         return currentMonth;
     });
 
+    const [ano, setAno] = useState(new Date().getFullYear());
+
+    const periodo = useMemo(() => `${selectedMonth}-${ano}`, [selectedMonth, ano]);
+
     const [totGastosVariaveis, setTotGastosVariaveis] = useState(0);
     const [totGastosFixosParc, setTotGastosFixosParc] = useState(0);
 
-    const [ano] = useState(new Date().getFullYear());
-    const periodo = `${selectedMonth}-${ano}`;
-
-    const { data: totalGastosVariaveis } = useGetTotGastosVariaveis(periodo, 4)
-    const { data: totalGastosFixosParc } = useGetTotFixosParcelados(periodo, 4)
+    const { data: totalGastosVariaveis } = useGetTotGastosVariaveis(periodo, 4);
+    const { data: totalGastosFixosParc } = useGetTotFixosParcelados(periodo, 4);
 
     useEffect(() => {
-        if (totalGastosVariaveis) {
+        if (totalGastosVariaveis !== undefined) {
             setTotGastosVariaveis(totalGastosVariaveis);
         }
-        if (totalGastosFixosParc) {
+        if (totalGastosFixosParc !== undefined) {
             setTotGastosFixosParc(totalGastosFixosParc);
-        } 
-    }, [totalGastosVariaveis, totalGastosFixosParc])
+        }
+    }, [totalGastosVariaveis, totalGastosFixosParc]);
 
     return (
         <MainLayout>
@@ -46,6 +47,8 @@ const Dashboard = () => {
                     <FiltroPeriodo
                         selectedMonth={selectedMonth}
                         setSelectedMonth={setSelectedMonth}
+                        ano={ano} 
+                        setAno={setAno}
                     />
                 </div>
             </div>
@@ -53,14 +56,13 @@ const Dashboard = () => {
             <div>
                 <h1 className="font-bold text-[18px] mb-2">Resumo</h1>
                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full mb-5">
-                    <CardsResumo selectedMonth={selectedMonth}
+                    <CardsResumo periodo={periodo}
                     />
                 </div>
             </div>
 
-
             <div className="w-full">
-                <ResumoDividasPorCredor selectedMonth={selectedMonth} />
+                <ResumoDividasPorCredor periodo={periodo}/>
             </div>
 
             <div className="flex flex-col md:flex-row gap-6 h-full">
@@ -70,7 +72,7 @@ const Dashboard = () => {
                         <span className="font-bold">{formatCurrency(totGastosFixosParc)}</span>
                     </div>
                     <div className="flex-1 overflow-auto">
-                        <GatosFixosParcelados selectedMonth={selectedMonth} />
+                        <GatosFixosParcelados periodo={periodo} />
                     </div>
                 </div>
 
@@ -80,7 +82,7 @@ const Dashboard = () => {
                         <span className="font-bold">{formatCurrency(totGastosVariaveis)}</span>
                     </div>
                     <div className="flex-1 overflow-auto">
-                        <GatosVariaveis selectedMonth={selectedMonth} />
+                        <GatosVariaveis periodo={periodo} />
                     </div>
                 </div>
             </div>
