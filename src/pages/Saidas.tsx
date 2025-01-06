@@ -36,11 +36,11 @@ const Saidas = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:min-h-[70vh] max-h-[70vh]">
                 <div className="flex flex-col h-full">
                     <h1 className="font-bold text-[18px] mb-2">Gastos Fixos e Parcelados</h1>
-                    <GatosFixosParcelados />
+                    {/* <GatosFixosParcelados /> */}
                 </div>
                 <div className="flex flex-col h-full">
                     <h1 className="font-bold text-[18px] mb-2">Gastos Variados</h1>
-                    <GatosVariaveis />
+                    {/* <GatosVariaveis /> */}
                 </div>
             </div>
 

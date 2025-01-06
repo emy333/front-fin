@@ -50,8 +50,9 @@ const GatosFixosParcelados: React.FC<dataProps> = ({ selectedMonth }) => {
                 <td className="px-4 py-2">{gasto.pago ? "Sim" : "Não"}</td>
                 <td className="px-4 py-2">{gasto.tipo_pagamento}</td>
                 <td className="px-4 py-2">
-                  {gasto.parcela_atual && gasto.total_parcela ? `${gasto.parcela_atual}/${gasto.total_parcela}` : ""}
+                  {parseInt(gasto.total_parcela) > 1 ? `${gasto.parcela_atual} / ${gasto.total_parcela}` : ""}
                 </td>
+
                 <td className="px-4 py-2">{gasto.valor}</td>
               </tr>
             ))
