@@ -1,7 +1,11 @@
 import { useGetGatosFixosParcelados } from "@/hooks/useGetGastosFixosParcelados";
 import { formatCurrency } from "@/utils/formatCurrency";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useUpdateStatusSaida } from "@/hooks/usePutStatusSaida";
+import { useState, useEffect } from "react";
 
 interface GastosFixosParcelados {
+  id: number;
   descricao: string;
   credor_descricao: string;
   pago: boolean;
@@ -20,6 +24,32 @@ interface dataProps {
 const TableGastosFixosParcelados: React.FC<dataProps> = ({ periodo }) => {
 
   const { data, isLoading, isError } = useGetGatosFixosParcelados(periodo, 4);
+  const [localData, setLocalData] = useState<GastosFixosParcelados[]>([]);
+  const updateStatus = useUpdateStatusSaida();
+
+
+  useEffect(() => {
+    if (data) {
+      setLocalData(data);
+    }
+  }, [data]);
+
+  const handleCheckboxChange = async (id: number, currentPago: boolean) => {
+    const updatedPago = !currentPago;
+
+    try {
+      await updateStatus.mutateAsync({ id_saida: id, pago: updatedPago });
+      setLocalData((prev) =>
+        prev.map((gasto) =>
+          gasto.id === id ? { ...gasto, pago: updatedPago } : gasto
+        )
+      );
+
+    } catch (error) {
+      console.error("Erro ao atualizar status:", error);
+    }
+  };
+
 
   const totalValue = data?.reduce((acc: number, gasto: GastosFixosParcelados) => {
     const valor = parseFloat(gasto.valor.toString());
@@ -34,24 +64,31 @@ const TableGastosFixosParcelados: React.FC<dataProps> = ({ periodo }) => {
       <table className="min-w-full table-auto text-sm">
         <thead>
           <tr className="bg-gray-100 dark:bg-gray-800">
+            <th className="px-4 py-2 text-left">Pago?</th>
+
             <th className="px-4 py-2 text-left">Descrição</th>
             <th className="px-4 py-2 text-left">Credor</th>
-            <th className="px-4 py-2 text-left">Pago?</th>
             <th className="px-4 py-2 text-left">Tipo de Pagamento</th>
             <th className="px-4 py-2 text-left">Total de Parcelas</th>
             <th className="px-4 py-2 text-left">Valor</th>
           </tr>
         </thead>
         <tbody>
-          {data && data.length > 0 ? (
-            data.map((gasto: GastosFixosParcelados) => (
+          {localData && localData.length > 0 ? (
+            localData.map((gasto: GastosFixosParcelados) => (
               <tr
-                key={gasto.descricao}
-                className={`${gasto.pago ? "bg-green-200 dark:bg-green-700" : ""} transition duration-300`}
+                key={gasto.id}
+                className={`${gasto.pago ? "bg-green-200 dark:bg-green-700" : ""
+                  } transition duration-300`}
               >
+                <td className="text-center">
+                  <Checkbox
+                    checked={gasto.pago}
+                    onClick={() => handleCheckboxChange(gasto.id, gasto.pago)}
+                  />
+                </td>
                 <td className="px-4 py-2">{gasto.descricao.toUpperCase()}</td>
                 <td className="px-4 py-2">{gasto.credor_descricao.toUpperCase()}</td>
-                <td className="px-4 py-2">{gasto.pago ? "SIM" : "NÃO"}</td>
                 <td className="px-4 py-2">{gasto.tipo_pagamento.toUpperCase()}</td>
                 <td className="px-4 py-2">
                   {parseInt(gasto.total_parcela) > 1 ? `${gasto.parcela_atual} / ${gasto.total_parcela}` : ""}

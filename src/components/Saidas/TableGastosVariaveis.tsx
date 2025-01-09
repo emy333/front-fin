@@ -1,7 +1,8 @@
 import { useGetGatosVariaveis } from "@/hooks/useGetGastosVariaveis";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { Checkbox } from "@/components/ui/checkbox";
-import axiosInstance from "@/services/api";
+import { useUpdateStatusSaida } from "@/hooks/usePutStatusSaida";
+import { useEffect, useState } from "react";
 
 interface GastosVariaveis {
     id: number;
@@ -11,7 +12,7 @@ interface GastosVariaveis {
     tipo_pagamento: string;
     categoria: string;
     total_parcela: string;
-    parcela_atual: string;
+    parcela_atual: string; 
     data_vencimento: string;
     valor: number;
 }
@@ -22,16 +23,40 @@ interface dataProps {
 
 const TableGastosVariaveis: React.FC<dataProps> = ({ periodo }) => {
     const { data, isLoading, isError } = useGetGatosVariaveis(periodo, 4);
+    const [localData, setLocalData] = useState<GastosVariaveis[]>([]);
+    const updateStatus = useUpdateStatusSaida();
+
+    useEffect(() => {
+        if (data) {
+            setLocalData(data);
+        }
+    }, [data]);
+
+    const handleCheckboxChange = async (id: number, currentPago: boolean) => {
+        const updatedPago = !currentPago;
+
+        try {
+            await updateStatus.mutateAsync({ id_saida: id, pago: updatedPago });
+            setLocalData((prev) =>
+                prev.map((gasto) =>
+                    gasto.id === id ? { ...gasto, pago: updatedPago } : gasto
+                )
+            );
+
+        } catch (error) {
+            console.error("Erro ao atualizar status:", error);
+        }
+    };
+
 
     if (isLoading) return <div>Loading...</div>;
     if (isError) return <div>Error fetching data.</div>;
 
-
-
-    const totalValue = data?.reduce((acc: number, gasto: GastosVariaveis) => {
-        const valor = parseFloat(gasto.valor.toString());
-        return acc + valor;
-    }, 0) || 0;
+    const totalValue =
+        localData?.reduce((acc: number, gasto: GastosVariaveis) => {
+            const valor = parseFloat(gasto.valor.toString());
+            return acc + valor;
+        }, 0) || 0;
 
     return (
         <div className="overflow-x-auto">
@@ -46,15 +71,17 @@ const TableGastosVariaveis: React.FC<dataProps> = ({ periodo }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {data && data.length > 0 ? (
-                        data.map((gasto: GastosVariaveis) => (
+                    {localData && localData.length > 0 ? (
+                        localData.map((gasto: GastosVariaveis) => (
                             <tr
                                 key={gasto.id}
-                                className={`${gasto.pago ? "bg-green-200 dark:bg-green-700" : ""} transition duration-300`}
+                                className={`${gasto.pago ? "bg-green-200 dark:bg-green-700" : ""
+                                    } transition duration-300`}
                             >
                                 <td className="text-center">
                                     <Checkbox
                                         checked={gasto.pago}
+                                        onClick={() => handleCheckboxChange(gasto.id, gasto.pago)}
 
                                     />
                                 </td>
@@ -71,7 +98,6 @@ const TableGastosVariaveis: React.FC<dataProps> = ({ periodo }) => {
                             </td>
                         </tr>
                     )}
-
                 </tbody>
                 <tfoot>
                     <tr className="bg-gray-100 dark:bg-gray-800">
