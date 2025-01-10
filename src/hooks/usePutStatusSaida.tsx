@@ -8,7 +8,7 @@ const putStatusSaida = async (id_saida: number, pago: boolean) => {
         pago,
     });
 
-    return data; 
+    return data;
 };
 
 export const useUpdateStatusSaida = () => {

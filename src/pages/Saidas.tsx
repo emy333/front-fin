@@ -3,7 +3,7 @@ import MainLayout from "@/layouts/main";
 import FiltroPeriodo from "@/components/FiltroPeriodo";
 import { Button } from "@/components/ui/button";
 import { MdAddCard } from "react-icons/md";
-import AdicionarSaida from "@/components/AdicionarSaida";
+import AdicionarSaida from "@/components/Saidas/AdicionarSaida";
 import TableGastosFixosParcelados from "@/components/Saidas/TableGastosFixosParcelados";
 import TableGastosVariaveis from "@/components/Saidas/TableGastosVariaveis";
 
