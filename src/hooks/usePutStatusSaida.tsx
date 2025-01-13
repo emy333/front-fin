@@ -7,7 +7,7 @@ const putStatusSaida = async (id_saida: number, pago: boolean) => {
     const { data } = await axiosInstance.put(`/saidas/editaStatus/${id_saida}`, {
         pago,
     });
-
+ 
     return data;
 };
 

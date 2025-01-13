@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { AppSidebar } from '@/components/app-sidebar';
 import ButtonDark from '@/components/ButtonDarkMode';
-
+import { Toaster } from "@/components/ui/toaster"
 import {
     SidebarInset,
     SidebarProvider,
@@ -11,6 +11,8 @@ import {
 interface MainLayoutProps {
     children: ReactNode;
 }
+
+
 
 const MainLayout = ({ children }: MainLayoutProps) => {
     const [isDark, setIsDark] = useState(false);
@@ -39,6 +41,8 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                 <div className="flex flex-1 flex-col gap-4 p-4 ">
                     {children}
                 </div>
+                <Toaster />
+
             </SidebarInset>
         </SidebarProvider>
     );
