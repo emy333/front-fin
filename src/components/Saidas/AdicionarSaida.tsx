@@ -1,37 +1,22 @@
 import React from "react";
-import {
-    Dialog,
-    DialogContent,
-    DialogFooter,
-    DialogHeader,
-} from "@/components/ui/dialog";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
+import { Dialog, DialogContent, DialogFooter, DialogHeader } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useGetCredores } from "@/hooks/useGetCredores";
-import { format } from 'date-fns';
-import { CalendarDays } from 'lucide-react';
 import { ptBR } from "date-fns/locale";
-import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { format } from "date-fns"
+import { Calendar as CalendarIcon } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { Calendar } from "@/components/ui/calendar"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+
 
 interface AddSaidaProps {
     open: boolean;
@@ -56,31 +41,34 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
 
     const { data: credores = [] } = useGetCredores(4);
 
-
     const formSchema = z.object({
         descricao: z.string().min(1, { message: "Informe a descrição" }),
         tipo_pagamento: z.string().min(1, { message: "Selecione um tipo de pagamento" }),
         categoria: z.string().optional(),
-        credores: z.preprocess((val) => (val === undefined ? "" : val), z.string().min(1, { message: "Selecione um credor" })),
+        credores: z.preprocess(
+            (val) => (val === undefined ? "" : val),
+            z.string().min(1, { message: "Selecione um credor" })
+        ),
         pago: z.boolean(),
         gasto_fixo: z.boolean(),
-        valor: z.preprocess((val) => {
-            if (val === null || val === '' || val === 0 || val === undefined) {
-                return undefined;
-            }
-            if (typeof val === 'string') {
-                const parsedValue = parseFloat(val.replace(/[^\d.-]/g, ''));
-                return isNaN(parsedValue) ? undefined : parsedValue;
-            }
-            return val;
-        }, z.number()
-            .min(0.01, { message: "O valor deve ser maior que 0" })
+        valor: z.preprocess(
+            (val) => {
+                if (val === null || val === "" || val === 0 || val === undefined) {
+                    return undefined;
+                }
+                if (typeof val === "string") {
+                    const parsedValue = parseFloat(val.replace(/[^\d.-]/g, ""));
+                    return isNaN(parsedValue) ? undefined : parsedValue;
+                }
+                return val;
+            },
+            z.number().min(0.01, { message: "O valor deve ser maior que 0" })
         ),
         parcela_atual: z.number().nullable().optional(),
         tot_parcela: z.number().nullable().optional(),
-        data_vencimento: z.string().min(1, { message: "Informe a data de vencimento" }),
-
-
+        data_vencimento: z
+            .string()
+            .refine((val) => !isNaN(Date.parse(val)), { message: "Data inválida" }),
     });
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -95,13 +83,13 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
             valor: undefined,
             parcela_atual: null,
             tot_parcela: null,
+            data_vencimento: "",
         },
     });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
         if (values.data_vencimento) {
-            const formattedDate = format(new Date(values.data_vencimento), 'dd/MM/yyyy');
-            values.data_vencimento = formattedDate;
+            values.data_vencimento = format(new Date(values.data_vencimento), "dd/MM/yyyy");
         }
         console.log(values);
     }
@@ -114,6 +102,7 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+                        {/* Primeira linha com dois campos */}
                         <div className="flex flex-col sm:flex-row gap-4">
                             <FormField
                                 control={form.control}
@@ -144,10 +133,7 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     {tiposPagamento.map((tipo) => (
-                                                        <SelectItem
-                                                            key={tipo.value}
-                                                            value={tipo.value}
-                                                        >
+                                                        <SelectItem key={tipo.value} value={tipo.value}>
                                                             {tipo.descricao}
                                                         </SelectItem>
                                                     ))}
@@ -160,6 +146,7 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                             />
                         </div>
 
+                        {/* Segunda linha com dois campos */}
                         <div className="flex flex-col sm:flex-row gap-4">
                             <FormField
                                 control={form.control}
@@ -190,7 +177,6 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                                     </FormItem>
                                 )}
                             />
-
                             <FormField
                                 control={form.control}
                                 name="categoria"
@@ -198,19 +184,13 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                                     <FormItem className="flex-1">
                                         <FormLabel>Categoria</FormLabel>
                                         <FormControl>
-                                            <Select
-                                                value={field.value}
-                                                onValueChange={field.onChange}
-                                            >
+                                            <Select value={field.value} onValueChange={field.onChange}>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Selecione a Categoria" />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     {categoria.map((categoria) => (
-                                                        <SelectItem
-                                                            key={categoria.value}
-                                                            value={categoria.value}
-                                                        >
+                                                        <SelectItem key={categoria.value} value={categoria.value}>
                                                             {categoria.descricao}
                                                         </SelectItem>
                                                     ))}
@@ -223,6 +203,7 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                             />
                         </div>
 
+                        {/* Terceira linha com dois campos */}
                         <div className="flex flex-col sm:flex-row gap-4">
                             <FormField
                                 control={form.control}
@@ -241,7 +222,6 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                                     </FormItem>
                                 )}
                             />
-
                             <FormField
                                 control={form.control}
                                 name="gasto_fixo"
@@ -265,6 +245,7 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                             />
                         </div>
 
+                        {/* Quarta linha com dois campos */}
                         <div className="flex flex-col sm:flex-row gap-4">
                             <FormField
                                 control={form.control}
@@ -287,7 +268,6 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                                     </FormItem>
                                 )}
                             />
-
                             <FormField
                                 control={form.control}
                                 name="tot_parcela"
@@ -309,17 +289,53 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                                     </FormItem>
                                 )}
                             />
-
-
-
                         </div>
 
-                        <div className="flex flex-col sm:flex-row gap-4">
+                        <div className="flex flex-col sm:flex-row gap-4 items-center sm:items-start">
+                            <FormField
+                                control={form.control}
+                                name="data_vencimento"
+                                render={({ field }) => (
+                                    <FormItem className="flex-1">
+                                        <FormLabel className="flex flex-col">Data de Vencimento</FormLabel>
+                                        <FormControl>
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                    <Button
+                                                        variant={"outline"}
+                                                        className={cn(
+                                                            "w-full sm:w-auto justify-start text-left font-normal",
+                                                            !field.value && "text-muted-foreground"
+                                                        )}
+                                                    >
+                                                        <CalendarIcon className="mr-2 h-4 w-4" />
+                                                        {field.value
+                                                            ? format(new Date(field.value), "dd/MM/yyyy", { locale: ptBR })
+                                                            : <span>Selecione uma data</span>}
+                                                    </Button>
+                                                </PopoverTrigger>
+                                                <PopoverContent className="w-auto p-0">
+                                                    <Calendar
+                                                        mode="single"
+                                                        selected={field.value ? new Date(field.value) : undefined}
+                                                        onSelect={(selectedDate) => {
+                                                            field.onChange(selectedDate ? selectedDate.toISOString() : "");
+                                                        }}
+                                                        locale={ptBR}
+                                                        initialFocus
+                                                    />
+                                                </PopoverContent>
+                                            </Popover>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <FormField
                                 control={form.control}
                                 name="pago"
                                 render={({ field }) => (
-                                    <FormItem className="text-center">
+                                    <FormItem className="flex-1" >
                                         <FormControl>
                                             <Checkbox
                                                 checked={field.value}
@@ -332,8 +348,6 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                                 )}
                             />
                         </div>
-
-
                         <DialogFooter>
                             <Button type="submit">Salvar</Button>
                         </DialogFooter>
@@ -341,6 +355,7 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                 </Form>
             </DialogContent>
         </Dialog>
+
     );
 };
 
