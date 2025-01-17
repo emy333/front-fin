@@ -27,7 +27,7 @@ const TableGastosVariaveis: React.FC<dataProps> = ({ periodo }) => {
     const [localData, setLocalData] = useState<GastosVariaveis[]>([]);
     const updateStatus = useUpdateStatusSaida();
     const [modalEditSaida, setModalEditSaida] = useState(false);
-    const [idClicked, setIdClicked] = useState<number | null>(null);
+    const [idClicked, setIdClicked] = useState(0);
 
     useEffect(() => {
         if (data) {
@@ -84,7 +84,7 @@ const TableGastosVariaveis: React.FC<dataProps> = ({ periodo }) => {
                             localData.map((gasto: GastosVariaveis) => (
                                 <tr
                                     key={gasto.id}
-                                    onDoubleClick={(e) => handleDetalhesSaida(gasto.id)}
+                                    onDoubleClick={() => handleDetalhesSaida(gasto.id)}
                                     className={`${gasto.pago ? "bg-green-200 dark:bg-green-700" : ""
                                         } transition duration-300`}
                                 >

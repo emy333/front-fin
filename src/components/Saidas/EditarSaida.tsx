@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogFooter, DialogHeader } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,17 +19,20 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import axiosInstance from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
 import { tiposPagamento, categoria } from "@/constants";
+import { useGetDetalhesSaida } from "@/hooks/usegetDetalhesSaidas";
 
 interface EditSaidaProps {
     open: boolean;
     setOpen: (value: boolean) => void;
-    idSaida: number | null;
+    idSaida: number;
 }
 
 const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
 
     const { data: credores = [] } = useGetCredores(4);
     const [loading, setLoading] = useState(false);
+
+    const { data: dataSaida } = useGetDetalhesSaida(idSaida);
 
     const formSchema = z.object({
         descricao: z.string().min(1, { message: "Informe a descrição" }),
@@ -77,6 +80,8 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
         },
     });
 
+
+
     const { toast } = useToast()
 
 
@@ -108,7 +113,7 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
                     description: "Registro da despesa foi adicionado com sucesso",
                 })
                 setOpen(false);
-                
+
             }
 
         } catch (e) {
@@ -140,6 +145,15 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
         }
     }
 
+    useEffect(() => {
+        if (dataSaida) {
+            form.reset({
+                descricao: String(dataSaida.descricao) || "",
+            });
+        }
+    }, [dataSaida, form]);
+
+
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent className="sm:max-w-[50%]">
@@ -150,6 +164,7 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
                         <div className="flex flex-col sm:flex-row gap-4">
                             <FormField
+
                                 control={form.control}
                                 name="descricao"
                                 render={({ field }) => (
