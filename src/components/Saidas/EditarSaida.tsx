@@ -18,28 +18,15 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import axiosInstance from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
-
+import { tiposPagamento, categoria } from "@/constants";
 
 interface EditSaidaProps {
     open: boolean;
     setOpen: (value: boolean) => void;
+    idSaida: number | null;
 }
 
-const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen }) => {
-    const tiposPagamento = [
-        { value: "CRÉDITO", descricao: "Crédito" },
-        { value: "DÉBITO", descricao: "Débito" },
-        { value: "PIX", descricao: "PIX" },
-        { value: "PRAZO", descricao: "A prazo" },
-        { value: "OUTROS", descricao: "Outros" },
-    ];
-    const categoria = [
-        { value: "COMIDA", descricao: "Comida" },
-        { value: "LAZER", descricao: "Lazer" },
-        { value: "COSMÉTICOS", descricao: "Cosméticos" },
-        { value: "VESTUÁRIO", descricao: "Vestuário" },
-        { value: "OUTROS", descricao: "Outros" },
-    ];
+const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
 
     const { data: credores = [] } = useGetCredores(4);
     const [loading, setLoading] = useState(false);
@@ -121,7 +108,7 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen }) => {
                     description: "Registro da despesa foi adicionado com sucesso",
                 })
                 setOpen(false);
-                form.reset();
+                
             }
 
         } catch (e) {
@@ -133,6 +120,24 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen }) => {
             setLoading(false);
         }
 
+    }
+
+    const deleteSaida = async () => {
+        try {
+            const response = await axiosInstance.delete(`/saidas/${idSaida}`);
+            if (response.status === 200) {
+                toast({
+                    title: "Sucesso ao excluir a saída!",
+                    description: "Registro da despesa foi excluído com sucesso",
+                })
+                setOpen(false);
+            }
+        } catch (e) {
+            toast({
+                title: "Ocorreu um erro ao excluir a saída!",
+                description: "Lamentamos o imprevisto, tente novamente mais tarde.",
+            })
+        }
     }
 
     return (
@@ -392,7 +397,14 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen }) => {
                             />
                         </div>
                         <DialogFooter>
-                            <Button className="">Excluir</Button>
+
+                            <Button
+                                type="button"
+                                variant="destructive"
+                                onClick={deleteSaida}
+                            >
+                                Excluir
+                            </Button>
                             <Button
                                 type="submit"
                                 disabled={loading}
@@ -421,6 +433,7 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen }) => {
                         </DialogFooter>
                     </form>
                 </Form>
+
             </DialogContent>
         </Dialog>
 

@@ -18,6 +18,7 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import axiosInstance from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
+import { tiposPagamento, categoria } from "@/constants";
 
 
 interface AddSaidaProps {
@@ -26,20 +27,7 @@ interface AddSaidaProps {
 }
 
 const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
-    const tiposPagamento = [
-        { value: "CRÉDITO", descricao: "Crédito" },
-        { value: "DÉBITO", descricao: "Débito" },
-        { value: "PIX", descricao: "PIX" },
-        { value: "PRAZO", descricao: "A prazo" },
-        { value: "OUTROS", descricao: "Outros" },
-    ];
-    const categoria = [
-        { value: "COMIDA", descricao: "Comida" },
-        { value: "LAZER", descricao: "Lazer" },
-        { value: "COSMÉTICOS", descricao: "Cosméticos" },
-        { value: "VESTUÁRIO", descricao: "Vestuário" },
-        { value: "OUTROS", descricao: "Outros" },
-    ];
+  
 
     const { data: credores = [] } = useGetCredores(4);
     const [loading, setLoading] = useState(false);
@@ -48,10 +36,7 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
         descricao: z.string().min(1, { message: "Informe a descrição" }),
         tipo_pagamento: z.string().min(1, { message: "Selecione um tipo de pagamento" }),
         categoria: z.string().optional(),
-        credores: z.preprocess(
-            (val) => (val === undefined ? "" : val),
-            z.string().min(1, { message: "Selecione um credor" })
-        ),
+        credores: z.string().optional(),
         pago: z.boolean(),
         gasto_fixo: z.boolean(),
         valor: z.preprocess(
@@ -69,9 +54,7 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
         ),
         parcela_atual: z.number().nullable().optional(),
         tot_parcela: z.number().nullable().optional(),
-        data_vencimento: z
-            .string()
-            .refine((val) => !isNaN(Date.parse(val)), { message: "Data inválida" }),
+        data_vencimento: z.string().nullable().optional(),
     });
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -115,7 +98,7 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
         setLoading(true);
         try {
             const response = await axiosInstance.post("/saidas", data);
-            if (response.status === 200) {
+            if (response.status === 201) {
                 toast({
                     title: "Sucesso ao adicionar a saída!",
                     description: "Registro da despesa foi adicionado com sucesso",
@@ -192,7 +175,7 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                                 name="credores"
                                 render={({ field }) => (
                                     <FormItem className="flex-1">
-                                        <FormLabel>Credor *</FormLabel>
+                                        <FormLabel>Credor</FormLabel>
                                         <FormControl>
                                             <Select
                                                 value={field.value ? String(field.value) : "Selecionar Credor"}
@@ -243,7 +226,7 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                                 name="data_vencimento"
                                 render={({ field }) => (
                                     <FormItem className="flex-1">
-                                        <FormLabel className="flex flex-col">Data de Vencimento *</FormLabel>
+                                        <FormLabel className="flex flex-col">Data de Vencimento</FormLabel>
                                         <FormControl>
                                             <Popover>
                                                 <PopoverTrigger asChild>
