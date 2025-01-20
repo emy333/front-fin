@@ -34,9 +34,7 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
 
     const { data: dataSaida } = useGetDetalhesSaida(idSaida);
 
-
     const { toast } = useToast()
-
 
     const deleteSaida = async () => {
         try {
@@ -55,7 +53,6 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
             })
         }
     }
-
 
     const formSchema = z.object({
         descricao: z.string().min(1, { message: "Informe a descrição" }),
@@ -103,7 +100,7 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
 
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
-
+        setLoading(true);
         const dados = {
             id_usuario: 4,
             data_vencimento: values.data_vencimento,
@@ -118,16 +115,15 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
             gasto_fixo: values.gasto_fixo,
         };
 
-
         try {
             const response = await axiosInstance.put(`/saidas/${idSaida}`, dados);
             if (response.status === 200) {
-                setOpen(false);
-                window.location.reload();
                 toast({
                     title: "Saída atualizada com sucesso!",
                     description: "Registro da despesa foi atualizado com sucesso",
                 });
+                setOpen(false);
+                window.location.reload();
             }
         } catch (error) {
             console.error("Erro ao atualizar status:", error);
@@ -135,10 +131,10 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
                 title: "Erro ao atualizar saída",
                 description: "Ocorreu um erro ao atualizar o registro. Tente novamente.",
             });
+        } finally {
+            setLoading(false);
         }
     }
-
-
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
