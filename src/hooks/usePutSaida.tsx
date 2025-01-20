@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import axiosInstance from "@/services/api";
-import { format } from "date-fns"; // Certifique-se de importar corretamente
+import { format } from "date-fns"; 
 
 const putSaida = async (id_saida: number, dados: any) => {
     if (!id_saida) return null;
@@ -11,7 +11,7 @@ const putSaida = async (id_saida: number, dados: any) => {
         dados,
     });
 
-    return data.saidas;
+    return data;
 };
 
 export const useUpdateSaida = () => {

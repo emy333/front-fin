@@ -20,8 +20,6 @@ import axiosInstance from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
 import { tiposPagamento, categoria } from "@/constants";
 import { useGetDetalhesSaida } from "@/hooks/usegetDetalhesSaidas";
-import { data } from "react-router-dom";
-import { useUpdateSaida } from "@/hooks/usePutSaida";
 
 interface EditSaidaProps {
     open: boolean;
@@ -103,7 +101,6 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
         }
     }, [dataSaida, form]);
 
-    const { mutateAsync } = useUpdateSaida();
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
 
@@ -121,15 +118,17 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
             gasto_fixo: values.gasto_fixo,
         };
 
+
         try {
-            const response = await mutateAsync({ id_saida: idSaida, dados });
+            const response = await axiosInstance.put(`/saidas/${idSaida}`, dados);
             if (response.status === 200) {
+                setOpen(false);
+                window.location.reload();
                 toast({
                     title: "Saída atualizada com sucesso!",
                     description: "Registro da despesa foi atualizado com sucesso",
                 });
             }
-
         } catch (error) {
             console.error("Erro ao atualizar status:", error);
             toast({
@@ -137,8 +136,7 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
                 description: "Ocorreu um erro ao atualizar o registro. Tente novamente.",
             });
         }
-    };
-
+    }
 
 
 
