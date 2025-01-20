@@ -363,7 +363,11 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
                                     <FormItem className="flex-1">
                                         <FormLabel>Gasto Fixo?</FormLabel>
                                         <FormControl>
-                                            <Select {...field} value={field.value ? "true" : "false"}>
+                                            <Select
+                                                {...field}
+                                                onValueChange={(value) => field.onChange(value === "true")}
+                                                value={field.value ? "true" : "false"}
+                                            >
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Selecione se é Gasto Fixo" />
                                                 </SelectTrigger>
@@ -377,6 +381,7 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
                                     </FormItem>
                                 )}
                             />
+
 
                             <FormField
                                 control={form.control}
