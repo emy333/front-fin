@@ -11,7 +11,7 @@ const detalhesSaidas = async (idSaida: number ) => {
     if (data.erro) {
         throw new Error("Saida não encontrada");
     }
-    return data.result;
+    return data.result[0];
 };
 
 export const useGetDetalhesSaida = (idSaida: number) => {

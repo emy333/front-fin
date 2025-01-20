@@ -65,6 +65,7 @@ const TableGastosVariaveis: React.FC<dataProps> = ({ periodo }) => {
         setIdClicked(id);
         setModalEditSaida(true);
     }
+    
 
     return (
         <>
@@ -78,7 +79,7 @@ const TableGastosVariaveis: React.FC<dataProps> = ({ periodo }) => {
                             <th className="px-4 py-2 text-left">Tipo de Pagamento</th>
                             <th className="px-4 py-2 text-left">Valor</th>
                         </tr>
-                    </thead>
+                    </thead> 
                     <tbody>
                         {localData && localData.length > 0 ? (
                             localData.map((gasto: GastosVariaveis) => (
