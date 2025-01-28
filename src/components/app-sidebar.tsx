@@ -20,7 +20,7 @@ const data = {
     },
     {
       title: "Entradas",
-      url: "/",
+      url: "/entradas",
     },
     {
       title: "Saídas",

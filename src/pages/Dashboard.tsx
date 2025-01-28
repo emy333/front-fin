@@ -56,8 +56,7 @@ const Dashboard = () => {
             <div>
                 <h1 className="font-bold text-[18px] mb-2">Resumo</h1>
                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full mb-5">
-                    <CardsResumo periodo={periodo}
-                    />
+                    <CardsResumo periodo={periodo}/>
                 </div>
             </div>
 

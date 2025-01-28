@@ -12,7 +12,7 @@ import { useGetCredores } from "@/hooks/useGetCredores";
 import { ptBR } from "date-fns/locale";
 import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns"
-import { Calendar as CalendarIcon} from "lucide-react"
+import { Calendar as CalendarIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -27,7 +27,7 @@ interface AddSaidaProps {
 }
 
 const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
-  
+
 
     const { data: credores = [] } = useGetCredores(4);
     const [loading, setLoading] = useState(false);
@@ -342,7 +342,11 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                                     <FormItem className="flex-1">
                                         <FormLabel>Gasto Fixo?</FormLabel>
                                         <FormControl>
-                                            <Select {...field} value={field.value ? "true" : "false"}>
+                                            <Select
+                                                {...field}
+                                                value={field.value !== undefined ? String(field.value) : ""}
+                                                onValueChange={(value) => field.onChange(value === "true")}
+                                            >
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Selecione se é Gasto Fixo" />
                                                 </SelectTrigger>
