@@ -1,6 +1,7 @@
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useGetEntradas } from "@/hooks/entradas/useGetEntradas";
 import { useState, useEffect } from "react";
+import EditarEntrada from "./EditarEntrada";
 
 interface EntradasProps {
     id: number;
@@ -16,6 +17,13 @@ interface dataProps {
 const TableEntradas: React.FC<dataProps> = ({ periodo }) => {
     const { data, isLoading, isError } = useGetEntradas(periodo, 4);
     const [localData, setLocalData] = useState<EntradasProps[]>([]);
+    const [idClicked, setIdClicked] = useState(0);
+    const [modalEditEntrada, setModalEditEntrada] = useState(false);
+
+    const handleClickEditar = (id: number) => {
+        setIdClicked(id);
+        setModalEditEntrada(true);
+    };
 
     useEffect(() => {
         if (data) {
@@ -47,7 +55,7 @@ const TableEntradas: React.FC<dataProps> = ({ periodo }) => {
                     </thead>
                     <tbody>
                         {localData && localData.length > 0 ? (localData.map((entradas: EntradasProps) => (
-                            <tr key={entradas.id}>
+                            <tr key={entradas.id} onDoubleClick={() => handleClickEditar(entradas.id)}>
                                 <td className="px-4 py-2 text-left">{entradas.descricao}</td>
                                 <td className="px-4 py-2 text-left">
                                     {new Date(entradas.data_referente).toLocaleDateString("pt-BR")}
@@ -72,6 +80,14 @@ const TableEntradas: React.FC<dataProps> = ({ periodo }) => {
                     </tfoot>
                 </table>
             </div>
+
+            {modalEditEntrada && (
+                <EditarEntrada
+                    open={modalEditEntrada}
+                    setOpen={() => setModalEditEntrada(false)}
+                    idEntrada={idClicked}
+                />
+            )}
         </>
     )
 }
