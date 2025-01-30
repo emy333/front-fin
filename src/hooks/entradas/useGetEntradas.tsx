@@ -7,7 +7,7 @@ const entradas = async (periodo: string, idUser: number) => {
     if (!idUser) return null;
 
     const { data } = await axiosInstance.get(
-        `/entradas/${periodo}/${idUser}`
+        `/entradas/entradasMes/${periodo}/${idUser}`
     );
     if (data.erro) {
         throw new Error("Entradas não encontradas");

@@ -413,7 +413,7 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
                             </Button>
                             <Button
                                 type="submit"
-                                disabled={loading}
+                                disabled={loading} 
                             >
                                 {loading ? (
                                     <>
