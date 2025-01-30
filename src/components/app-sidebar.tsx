@@ -26,6 +26,10 @@ const data = {
       title: "Saídas",
       url: "/saidas",
     },
+    {
+      title: "Credores",
+      url: "/credores",
+    },
 
   ],
 }
