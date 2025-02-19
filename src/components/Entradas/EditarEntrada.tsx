@@ -56,7 +56,8 @@ const EditarEntrada: React.FC<EditaEntradaProps> = ({ open, setOpen, idEntrada }
             form.setValue("valor", entrada.valor);
             form.setValue("data_referente", entrada.data_referente);
         }
-    }, [[entrada, form]])
+    }, [entrada]);
+
 
     const deleteEntrada = async () => {
         try {
@@ -80,6 +81,7 @@ const EditarEntrada: React.FC<EditaEntradaProps> = ({ open, setOpen, idEntrada }
         setLoading(true);
         const dados = {
             id_usuario: 4,
+            data_referente: values.data_referente,
             descricao: values.descricao,
             valor: values.valor,
         };
@@ -92,7 +94,6 @@ const EditarEntrada: React.FC<EditaEntradaProps> = ({ open, setOpen, idEntrada }
                     description: "Registro da entrada foi atualizado com sucesso",
                 });
                 setOpen(false);
-                window.location.reload();
             }
         } catch (error) {
             console.error("Erro ao atualizar:", error);
