@@ -15,16 +15,9 @@ interface MainLayoutProps {
     children: ReactNode;
 }
 
-
-
 const MainLayout = ({ children }: MainLayoutProps) => {
     const [isDark, setIsDark] = useState(false);
-
-    const navigate = useNavigate();
-
-    const handleLogout = () => {
-        navigate('/auth');
-    };
+    const navigate = useNavigate(); 
 
     useEffect(() => {
         const savedTheme = localStorage.getItem("theme");
@@ -34,6 +27,11 @@ const MainLayout = ({ children }: MainLayoutProps) => {
 
         document.documentElement.classList.toggle("dark", isDark);
     }, [isDark]);
+
+    const handleLogout = () => {
+        localStorage.clear();
+        navigate("/auth"); 
+    };
 
     return (
         <SidebarProvider>
@@ -54,7 +52,6 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                     {children}
                 </div>
                 <Toaster />
-
             </SidebarInset>
         </SidebarProvider>
     );
