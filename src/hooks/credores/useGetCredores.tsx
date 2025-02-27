@@ -6,7 +6,7 @@ const credores = async (idUser: number) => {
     if (!idUser) return null;
 
     const { data } = await axiosInstance.get(
-        `/credores/${idUser}`
+        `/credores/credoresUsu/${idUser}`
     );
     if (data.erro) {
         throw new Error("Credores não encontrados");

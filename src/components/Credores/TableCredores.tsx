@@ -1,65 +1,58 @@
-import { formatCurrency } from "@/utils/formatCurrency";
 import { useGetCredores } from "@/hooks/useGetCredores";
 import { useState, useEffect } from "react";
+import EditarCredor from "./EditarCredores";
 
 interface CredoresProps {
     id_credor: number;
     descricao: string;
 }
 
-interface dataProps {
-    periodo: string;
-}
-
-const TableCredores: React.FC<dataProps> = ({ periodo }) => {
+const CardsCredores: React.FC = () => {
     const { data, isLoading, isError } = useGetCredores(4);
     const [localData, setLocalData] = useState<CredoresProps[]>([]);
-    const [idClicked, setIdClicked] = useState(0);
-    const [modalEditEntrada, setModalEditEntrada] = useState(false);
-
-    const handleClickEditar = (id: number) => {
-        setIdClicked(id);
-        setModalEditEntrada(true);
-    };
+    const [idClicked, setIdClicked] = useState<number | null>(null);
+    const [modalEditCredor, setModalEditCredor] = useState(false);
 
     useEffect(() => {
         if (data) {
             setLocalData(data);
-            console.log(localData);
         }
     }, [data]);
 
-
+    const handleClickEditar = (id: number) => {
+        setIdClicked(id);
+        setModalEditCredor(true);
+    };
 
     if (isLoading) return <div>Loading...</div>;
     if (isError) return <div>Error fetching data.</div>;
 
     return (
         <>
-            <div className="overflow-x-auto ">
-                <table className="min-w-full table-auto text-sm w-full">
-                    <thead>
-                        <tr className="bg-gray-100 dark:bg-gray-800">
-                            <th className="px-4 py-2 text-left">Descrição</th>            
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {localData && localData.length > 0 ? (localData.map((credor: CredoresProps) => (
-                            <tr key={credor.id_credor} onDoubleClick={() => handleClickEditar(credor.id_credor)}>
-                                <td className="px-4 py-2 text-left">{credor.descricao}</td>
-                            </tr>
-                        ))
-                        ) : (
-                            <tr>
-                                <td colSpan={6} className="text-center px-4 py-2">
-                                    Nenhum registro encontrado.
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ">
+                {localData.length > 0 ? (
+                    localData.map((credor) => (
+                        <div
+                            key={credor.id_credor}
+                            className="bg-white dark:bg-gray-800 p-4 shadow rounded-lg cursor-pointer hover:shadow-md transition"
+                            onClick={() => handleClickEditar(credor.id_credor)}
+                        >
+                            <p className="text-lg font-semibold text-gray-900 dark:text-white uppercase">{credor.descricao}</p>
+                        </div>
+                    ))
+                ) : (
+                    <div className="col-span-full text-center text-gray-500">Nenhum registro encontrado.</div>
+                )}
             </div>
+            {modalEditCredor && idClicked !== null && (
+                <EditarCredor
+                    open={modalEditCredor}
+                    setOpen={() => setModalEditCredor(false)}
+                    idCredor={idClicked}
+                />
+            )}
         </>
-    )
-}
-export default TableCredores;
+    );
+};
+
+export default CardsCredores;

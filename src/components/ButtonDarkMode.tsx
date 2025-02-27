@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { GoSun } from "react-icons/go";
-import { BsMoonStars } from "react-icons/bs";
+import { Moon, Sun } from "lucide-react";
 
 interface ButtonDarkProps {
     setIsDark: React.Dispatch<React.SetStateAction<boolean>>;
@@ -25,20 +24,18 @@ const ButtonDark = ({ setIsDark }: ButtonDarkProps) => {
         setLocalIsDark(!isDark);
         localStorage.setItem("theme", newTheme);
         document.documentElement.classList.toggle("dark", !isDark);
-        setIsDark(!isDark);  
+        setIsDark(!isDark);
     };
 
     return (
         <Button variant={"outline"} onClick={handleDarkMode}>
             {isDark ? (
                 <>
-                    <GoSun className="mr-1" />
-                    Modo Claro
+                    <Sun className="mr-1" />
                 </>
             ) : (
                 <>
-                    <BsMoonStars className="mr-1" />
-                    Modo Escuro
+                    <Moon className="mr-1" />
                 </>
             )}
         </Button>

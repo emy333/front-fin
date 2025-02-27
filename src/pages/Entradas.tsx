@@ -45,7 +45,6 @@ const Entradas = () => {
                 <div className="flex flex-col h-full mb-5 ">
                     <TableEntradas periodo={periodo} />
                 </div>
-
             </div>
 
             <AdicionarEntradas

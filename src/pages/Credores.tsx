@@ -1,22 +1,12 @@
 import MainLayout from "@/layouts/main";
 import { MdAddCard } from "react-icons/md";
 import { Button } from "@/components/ui/button";
-import FiltroPeriodo from "@/components/FiltroPeriodo";
-import { useState, useMemo } from "react";
-import TableEntradas from "@/components/Entradas/TableEntradas";
-import AdicionarEntradas from "@/components/Entradas/AdicionarEntradas";
+import { useState } from "react";
+import TableCredores from "@/components/Credores/TableCredores";
+import AdicionarCredores from "@/components/Credores/AdicionarCredores";
 
 const Credores = () => {
     const [openAdd, setOpenAdd] = useState(false);
-
-    const [selectedMonth, setSelectedMonth] = useState(() => {
-        const currentMonth = (new Date().getMonth() + 1).toString().padStart(2, '0');
-        return currentMonth;
-    });
-
-    const [ano, setAno] = useState(new Date().getFullYear());
-
-    const periodo = useMemo(() => `${selectedMonth}-${ano}`, [selectedMonth, ano]);
 
     return (
         <MainLayout>
@@ -32,26 +22,22 @@ const Credores = () => {
                         <MdAddCard />
                         <span className="hidden sm:inline">Adicionar Credor</span>
                     </Button>
-                    <FiltroPeriodo
-                        selectedMonth={selectedMonth}
-                        setSelectedMonth={setSelectedMonth}
-                        ano={ano}
-                        setAno={setAno}
-                    />
+
                 </div>
             </div>
 
             <div className=" gap-6 md:min-h-[70vh] max-h-[70vh] ">
                 <div className="flex flex-col h-full mb-5 ">
-                    <TableEntradas periodo={periodo} />
+                    <TableCredores />
                 </div>
 
             </div>
 
-            <AdicionarEntradas
+            <AdicionarCredores
                 open={openAdd}
                 setOpen={setOpenAdd}
             />
+
         </MainLayout>
     )
 }

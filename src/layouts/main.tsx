@@ -7,6 +7,9 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { LogOut } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 interface MainLayoutProps {
     children: ReactNode;
@@ -17,6 +20,12 @@ interface MainLayoutProps {
 const MainLayout = ({ children }: MainLayoutProps) => {
     const [isDark, setIsDark] = useState(false);
 
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        navigate('/auth');
+    };
+
     useEffect(() => {
         const savedTheme = localStorage.getItem("theme");
         const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -24,7 +33,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         setIsDark(savedTheme === "dark" || (savedTheme === null && prefersDark));
 
         document.documentElement.classList.toggle("dark", isDark);
-    }, [isDark]); 
+    }, [isDark]);
 
     return (
         <SidebarProvider>
@@ -34,6 +43,9 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                     <div className="flex items-center gap-2 px-3 w-full">
                         <SidebarTrigger />
                         <div className="ml-auto">
+                            <Button onClick={handleLogout} variant={"outline"} className='mr-2'>
+                                <LogOut /> Sair
+                            </Button>
                             <ButtonDark setIsDark={setIsDark} />
                         </div>
                     </div>
