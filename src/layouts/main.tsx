@@ -1,10 +1,17 @@
 import { ReactNode, useEffect, useState } from 'react';
-import { AppSidebar } from '@/components/app-sidebar';
 import ButtonDark from '@/components/ButtonDarkMode';
 import { Toaster } from "@/components/ui/toaster"
 import {
+    Sidebar,
+    SidebarContent,
+    SidebarGroup,
+    SidebarHeader,
     SidebarInset,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
     SidebarProvider,
+    SidebarRail,
     SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { LogOut } from 'lucide-react';
@@ -15,9 +22,32 @@ interface MainLayoutProps {
     children: ReactNode;
 }
 
+const data = {
+    navMain: [
+        {
+            title: "Dashboard",
+            url: "/",
+        },
+        {
+            title: "Entradas",
+            url: "/entradas",
+        },
+        {
+            title: "Saídas",
+            url: "/saidas",
+        },
+        {
+            title: "Credores",
+            url: "/credores",
+        },
+
+    ],
+}
+
+
 const MainLayout = ({ children }: MainLayoutProps) => {
     const [isDark, setIsDark] = useState(false);
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
     useEffect(() => {
         const savedTheme = localStorage.getItem("theme");
@@ -30,12 +60,43 @@ const MainLayout = ({ children }: MainLayoutProps) => {
 
     const handleLogout = () => {
         localStorage.clear();
-        navigate("/auth"); 
+        navigate("/auth");
     };
 
     return (
         <SidebarProvider>
-            <AppSidebar />
+            <Sidebar>
+                <SidebarHeader>
+                    <SidebarMenu>
+                        <SidebarMenuItem>
+                            <SidebarMenuButton size="lg" asChild>
+                                <a href="#">
+                                    <div className="flex flex-col gap-0.5 leading-none">
+                                        <span className="font-bold text-lg">FinFácil</span>
+                                    </div>
+                                </a>
+                            </SidebarMenuButton>
+                        </SidebarMenuItem>
+                    </SidebarMenu>
+                </SidebarHeader>
+                <SidebarContent>
+                    <SidebarGroup>
+                        <SidebarMenu>
+                            {data.navMain.map((item) => (
+                                <SidebarMenuItem key={item.title}>
+                                    <SidebarMenuButton asChild>
+                                        <a href={item.url} className="font-medium">
+                                            {item.title}
+                                        </a>
+                                    </SidebarMenuButton>
+
+                                </SidebarMenuItem>
+                            ))}
+                        </SidebarMenu>
+                    </SidebarGroup>
+                </SidebarContent>
+                <SidebarRail />
+            </Sidebar>
             <SidebarInset>
                 <header className="flex h-16 shrink-0 items-center gap-2 border-b">
                     <div className="flex items-center gap-2 px-3 w-full">
@@ -54,6 +115,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                 <Toaster />
             </SidebarInset>
         </SidebarProvider>
+
     );
 };
 

@@ -35,7 +35,7 @@ export function Login({ className, ...props }: React.ComponentProps<"div">) {
         }
         localStorage.setItem("darkMode", darkMode.toString());
     }, [darkMode]);
-    
+
 
     const {
         register,
@@ -83,7 +83,7 @@ export function Login({ className, ...props }: React.ComponentProps<"div">) {
             >
                 {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </Button>
-            <Card className="overflow-hidden w-full max-w-4xl min-h-[80vh]">
+            <Card className="overflow-hidden w-full max-w-4xl min-h-[80vh] shadow-lg">
                 <CardContent className="grid p-0 md:grid-cols-2 h-full">
                     <form onSubmit={handleSubmit(onSubmit)} className="p-6 md:p-8 flex flex-col justify-center h-full">
                         <div className="flex flex-col gap-6">
@@ -141,13 +141,17 @@ export function Login({ className, ...props }: React.ComponentProps<"div">) {
                             </p>
                         </div>
                     </form>
-                    <div className="relative hidden md:block bg-zinc-100 dark:bg-zinc-800 w-full min-h-[80vh]">
+                    <div className="relative hidden md:flex items-center justify-center bg-purple-100 dark:bg-purple-950 w-full min-h-[80vh]">
                         <img
-                            src="/placeholder.svg"
+                            src="/animacao.svg"
                             alt="Gerencie suas finanças com facilidade"
-                            className="w-full h-auto object-cover flex-1 dark:brightness-[0.2] dark:grayscale"
+                            className="w-auto h-auto max-w-full max-h-full"
                         />
                     </div>
+
+
+
+
                 </CardContent>
             </Card>
         </div>
