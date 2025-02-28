@@ -1,10 +1,11 @@
-import { MdOutlineAttachMoney } from "react-icons/md";
 import { useState, useEffect } from "react";
 import { getTotOrcamento } from "@/utils/totOrcamento";
 import { getTotDespesas } from "@/utils/totSaidas";
 import { getTotPagas } from "@/utils/totPagas";
 import { getTotSaldo } from "@/utils/totSaldo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DollarSign, Wallet, CheckCircle, CreditCard   } from "lucide-react";
+
 
 interface dataProps {
     periodo: string;
@@ -43,7 +44,7 @@ const CardsResumo: React.FC<dataProps> = ({ periodo }) => {
                 style: 'currency',
                 currency: 'BRL',
             }).format(totOrcamento),
-            icon: <MdOutlineAttachMoney />
+            icon: <DollarSign  />
         },
         {
             title: "Total de Gastos",
@@ -51,7 +52,7 @@ const CardsResumo: React.FC<dataProps> = ({ periodo }) => {
                 style: 'currency',
                 currency: 'BRL',
             }).format(totDespesas),
-            icon: <MdOutlineAttachMoney />
+            icon: <CreditCard />
         },
         {
             title: "Total Pago",
@@ -59,7 +60,7 @@ const CardsResumo: React.FC<dataProps> = ({ periodo }) => {
                 style: 'currency',
                 currency: 'BRL',
             }).format(totPagas),
-            icon: <MdOutlineAttachMoney />
+            icon: <CheckCircle />
         },
         {
             title: "Saldo Disponível",
@@ -67,7 +68,7 @@ const CardsResumo: React.FC<dataProps> = ({ periodo }) => {
                 style: 'currency',
                 currency: 'BRL',
             }).format(totSaldo),
-            icon: <MdOutlineAttachMoney />,
+            icon: <Wallet  />,
             isNegative: totSaldo < 0
         },
     ];
