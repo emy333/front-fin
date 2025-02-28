@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { Moon, Sun } from "lucide-react";
 import axiosInstance from "@/services/api";
 import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 
 const loginSchema = z.object({
     email: z.string().email("E-mail inválido"),
@@ -18,11 +19,13 @@ const loginSchema = z.object({
 
 export function Login({ className, ...props }: React.ComponentProps<"div">) {
     const navigate = useNavigate();
+    const [showPassword, setShowPassword] = useState(false);
+
     const [loginError, setLoginError] = useState("");
     const [darkMode, setDarkMode] = useState(() => {
         return localStorage.getItem("darkMode") === "true";
     });
-    const [isLoading, setIsLoading] = useState(false); // Adiciona estado para controle de carregamento
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (darkMode) {
@@ -43,7 +46,7 @@ export function Login({ className, ...props }: React.ComponentProps<"div">) {
 
     const onSubmit = async (data: any) => {
         setLoginError("");
-        setIsLoading(true); // Inicia o carregamento ao enviar o formulário
+        setIsLoading(true);
         try {
             const response = await axiosInstance.post("/auth", {
                 email: data.email,
@@ -66,7 +69,7 @@ export function Login({ className, ...props }: React.ComponentProps<"div">) {
                 setLoginError("Erro ao conectar-se ao servidor.");
             }
         } finally {
-            setIsLoading(false); // Finaliza o carregamento após a resposta
+            setIsLoading(false);
         }
     };
 
@@ -79,7 +82,7 @@ export function Login({ className, ...props }: React.ComponentProps<"div">) {
             >
                 {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </Button>
-            <Card className="overflow-hidden w-full max-w-4xl h-[80vh]">
+            <Card className="overflow-hidden w-full max-w-4xl min-h-[80vh]">
                 <CardContent className="grid p-0 md:grid-cols-2 h-full">
                     <form onSubmit={handleSubmit(onSubmit)} className="p-6 md:p-8 flex flex-col justify-center h-full">
                         <div className="flex flex-col gap-6">
@@ -100,25 +103,34 @@ export function Login({ className, ...props }: React.ComponentProps<"div">) {
                                 />
                                 {errors.email?.message && <p className="text-red-500 text-sm">{String(errors.email.message)}</p>}
                             </div>
-                            <div className="grid gap-3">
+                            <div className="grid gap-3 relative">
                                 <Label htmlFor="password">Senha</Label>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    placeholder="Digite sua senha"
-                                    {...register("password")}
-                                    className="h-12 text-lg"
-                                />
-                                {errors.password && <p className="text-red-500 text-sm">{String(errors.password.message)}</p>}
+                                <div className="relative">
+                                    <Input
+                                        id="password"
+                                        type={showPassword ? "text" : "password"}
+                                        placeholder="Digite uma senha"
+                                        {...register("password")}
+                                        className="h-12 text-lg pr-10"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-zinc-500 dark:text-zinc-400"
+                                    >
+                                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                    </button>
+                                </div>
+                                {errors.password?.message && <p className="text-red-500 text-sm">{String(errors.password.message)}</p>}
                             </div>
                             {loginError && <p className="text-red-500 text-sm">{loginError}</p>}
 
-                            <Button 
-                                type="submit" 
+                            <Button
+                                type="submit"
                                 className="w-full h-12 text-lg"
-                                disabled={isLoading} // Desabilita o botão durante o carregamento
+                                disabled={isLoading}
                             >
-                                {isLoading ? 'Carregando...' : 'Entrar'} {/* Exibe 'Carregando...' enquanto o login está em andamento */}
+                                {isLoading ? 'Carregando...' : 'Entrar'}
                             </Button>
                             <p className="text-center text-sm text-zinc-500 dark:text-zinc-400">
                                 Ainda não tem uma conta?{" "}
@@ -128,11 +140,11 @@ export function Login({ className, ...props }: React.ComponentProps<"div">) {
                             </p>
                         </div>
                     </form>
-                    <div className="relative hidden md:block bg-zinc-100 dark:bg-zinc-800 w-full h-full">
+                    <div className="relative hidden md:block bg-zinc-100 dark:bg-zinc-800 w-full min-h-[80vh]">
                         <img
                             src="/placeholder.svg"
                             alt="Gerencie suas finanças com facilidade"
-                            className="absolute inset-0 w-full h-full object-cover dark:brightness-[0.2] dark:grayscale"
+                            className="w-full h-auto object-cover flex-1 dark:brightness-[0.2] dark:grayscale"
                         />
                     </div>
                 </CardContent>
