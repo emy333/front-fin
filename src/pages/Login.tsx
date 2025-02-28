@@ -35,6 +35,7 @@ export function Login({ className, ...props }: React.ComponentProps<"div">) {
         }
         localStorage.setItem("darkMode", darkMode.toString());
     }, [darkMode]);
+    
 
     const {
         register,

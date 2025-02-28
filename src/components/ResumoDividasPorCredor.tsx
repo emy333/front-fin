@@ -2,7 +2,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 
 import { Card, CardContent, CardHeader, CardTitle, } from "@/components/ui/card";
 import { useGetTotCredores } from "@/hooks/useGetTotalCredores";
-import { useState } from "react";
 import { formatCurrency } from "@/utils/formatCurrency";
 
 interface dataProps {

@@ -28,6 +28,7 @@ interface AddSaidaProps {
 
 const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
 
+    const id_usuario = localStorage.getItem('userId');
 
     const { data: credores = [] } = useGetCredores(4);
     const [loading, setLoading] = useState(false);
@@ -82,7 +83,7 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
         }
 
         const data = {
-            id_usuario: "4",
+            id_usuario: String(id_usuario),
             data_vencimento: values.data_vencimento,
             pago: values.pago,
             descricao: values.descricao,
@@ -94,6 +95,7 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
             valor: values.valor,
             gasto_fixo: values.gasto_fixo,
         }
+        console.log(data)
 
         setLoading(true);
         try {
@@ -226,7 +228,7 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                                 name="data_vencimento"
                                 render={({ field }) => (
                                     <FormItem className="flex-1">
-                                        <FormLabel className="flex flex-col">Data de Vencimento</FormLabel>
+                                        <FormLabel className="flex flex-col">Data (Vencimento/Pagamento)</FormLabel>
                                         <FormControl>
                                             <Popover>
                                                 <PopoverTrigger asChild>

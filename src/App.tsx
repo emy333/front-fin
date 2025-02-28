@@ -7,10 +7,21 @@ import Credores from './pages/Credores';
 import { Login } from './pages/Login';
 import { Cadastro } from './pages/CadastroUsu';
 
+const isValidToken = (token: string) => {
+  try {
+    const decoded = JSON.parse(atob(token.split('.')[1])); 
+    const expirationDate = decoded.exp * 1000; 
+    return expirationDate > Date.now(); 
+  } catch (error) {
+    return false; 
+  }
+};
+
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
   const token = localStorage.getItem("token");
 
-  if (!token) {
+  if (!token || !isValidToken(token)) {
+    localStorage.removeItem("token"); 
     return <Navigate to="/auth" replace />;
   }
 
