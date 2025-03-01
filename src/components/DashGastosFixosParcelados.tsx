@@ -20,65 +20,63 @@ interface dataProps {
 }
 
 const GatosFixosParcelados: React.FC<dataProps> = ({ periodo }) => {
+  const id_usuario = localStorage.getItem("userId");
 
-  const { data, isLoading, isError } = useGetGatosFixosParcelados(periodo, 4);
-
+  const { data, isLoading, isError } = useGetGatosFixosParcelados(
+    periodo,
+    Number(id_usuario)
+  );
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error fetching data.</div>;
 
   return (
-
     <div className="rounded-lg shadow-lg">
-      <Card className="col-span-3 bg-gray-900 text-white">
-        <CardContent className="p-2 rounded-md border">
-          <ScrollArea className="h-[60vh] p-2">
-            <div className="space-y-4 p-3">
-              {data && data.length > 0 ? (
-                data.map((gasto: GastosFixosParcelados) => (
+      <Card className="col-span-3 text-white">
+        <CardContent className="p-2 rounded-md ">
+          {data && data.length > 0 ? (
+            <ScrollArea className="h-[60vh] overflow-auto p-2">
+              <div className="space-y-4 p-3">
+                {data.map((gasto: GastosFixosParcelados) => (
                   <div
                     key={gasto.descricao}
-                    className={`flex justify-between items-center p-4 rounded-lg shadow-md  min-h-20 ${gasto.pago ? "bg-green-600 dark:bg-green-800" : "bg-slate-300 dark:bg-slate-600"
-                      } `}
+                    className={`flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 rounded-lg shadow-md min-h-20 ${
+                      gasto.pago
+                        ? "bg-green-600 dark:bg-green-800"
+                        : "bg-slate-500 dark:bg-slate-500"
+                    }`}
                   >
-                    <div className="flex flex-col space-y-1 w-1/3">
-                      <p className="text-lg font-medium text-white">{gasto.descricao.toUpperCase()}</p>
-                      <p className="text-sm text-gray-300">{gasto.credor_descricao.toUpperCase()}</p>
-                    </div>
-
-                    <div className="w-1/6 text-center">
-                      <p className={`text-sm font-medium ${gasto.pago ? "text-green-200" : "text-slate-50"}`}>
-                        {gasto.pago ? "Pago" : "Não Pago"}
+                    <div className="flex flex-col space-y-1 w-full sm:w-2/3">
+                      <p className="text-lg font-medium dark:text-white">
+                        {gasto.descricao.toUpperCase()}
                       </p>
-                    </div>
 
-                    <div className="w-1/3 flex flex-col space-y-1 text-center">
-                      <p className="text-sm text-gray-300">{gasto.tipo_pagamento.toUpperCase()}</p>
-                      {parseInt(gasto.total_parcela) > 1 && (
-                        <p className="text-sm text-gray-400">
-                          {gasto.parcela_atual} / {gasto.total_parcela}
+                      <div className="flex flex-col sm:flex-row sm:space-x-1 space-y-1 sm:space-y-0">
+                        <p className="text-sm dark:text-gray-300">
+                          {gasto.credor_descricao.toUpperCase()}
                         </p>
-                      )}
+                        <p className="text-sm text-gray-300">
+                          ({gasto.tipo_pagamento.toUpperCase()})
+                        </p>
+                      </div>
                     </div>
 
-                    <div className="w-1/6 text-right font-semibold text-lg">
+                    <div className="w-full sm:w-1/4 text-right font-semibold text-lg mt-2 sm:mt-0">
                       {formatCurrency(gasto.valor)}
                     </div>
+
                   </div>
-                ))
-              ) : (
-                <div className="text-center p-4 text-sm text-gray-400">
-                  Nenhum registro encontrado.
-                </div>
-              )}
+                ))}
+              </div>
+            </ScrollArea>
+          ) : (
+            <div className="text-center p-4 text-sm text-gray-400">
+              Nenhum registro encontrado.
             </div>
-          </ScrollArea>
+          )}
         </CardContent>
       </Card>
     </div>
-
-
-
   );
 };
 

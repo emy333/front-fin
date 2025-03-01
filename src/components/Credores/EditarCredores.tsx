@@ -20,6 +20,7 @@ interface EditaCredorProps {
 const EditarCredor: React.FC<EditaCredorProps> = ({ open, setOpen, idCredor }) => {
     const [loading, setLoading] = useState(false);
     const { toast } = useToast()
+    const id_usuario = localStorage.getItem('userId');
 
     const formSchema = z.object({
         descricao: z.string().min(1, { message: "Informe a descrição" }),
@@ -29,7 +30,7 @@ const EditarCredor: React.FC<EditaCredorProps> = ({ open, setOpen, idCredor }) =
         resolver: zodResolver(formSchema),
     });
     const { data: credor } = useGetDetalhesCredores(idCredor);
-    const { refetch } = useGetCredores(4)
+    const { refetch } = useGetCredores(Number(id_usuario))
 
     useEffect(() => {
         if (credor) {
@@ -61,7 +62,7 @@ const EditarCredor: React.FC<EditaCredorProps> = ({ open, setOpen, idCredor }) =
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         setLoading(true);
         const dados = {
-            id_usuario: 4,
+            id_usuario: id_usuario,
             descricao: values.descricao,
         };
 

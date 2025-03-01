@@ -19,8 +19,9 @@ interface AddCredoresProps {
 const AdicionarCredores: React.FC<AddCredoresProps> = ({ open, setOpen }) => {
     const { toast } = useToast()
     const [loading, setLoading] = useState(false);
+    const id_usuario = localStorage.getItem('userId');
 
-    const { refetch } = useGetCredores(4)
+    const { refetch } = useGetCredores(Number(id_usuario))
 
     const formSchema = z.object({
         descricao: z.string().min(1, { message: "Informe a descrição" }),
@@ -36,7 +37,7 @@ const AdicionarCredores: React.FC<AddCredoresProps> = ({ open, setOpen }) => {
     async function onSubmit(values: z.infer<typeof formSchema>) {
 
         const data = {
-            id_usuario: "4",
+            id_usuario: id_usuario,
             descricao: values.descricao
         }
 

@@ -13,6 +13,8 @@ import { useGetTotFixosParcelados } from "@/hooks/useGetTotSaidasParceladasFixas
 import { formatCurrency } from "@/utils/formatCurrency";
 
 const Dashboard = () => {
+    const id_usuario = localStorage.getItem('userId');
+
     const [selectedMonth, setSelectedMonth] = useState(() => {
         const currentMonth = (new Date().getMonth() + 1).toString().padStart(2, '0');
         return currentMonth;
@@ -25,8 +27,8 @@ const Dashboard = () => {
     const [totGastosVariaveis, setTotGastosVariaveis] = useState(0);
     const [totGastosFixosParc, setTotGastosFixosParc] = useState(0);
 
-    const { data: totalGastosVariaveis } = useGetTotGastosVariaveis(periodo, 4);
-    const { data: totalGastosFixosParc } = useGetTotFixosParcelados(periodo, 4);
+    const { data: totalGastosVariaveis } = useGetTotGastosVariaveis(periodo, Number(id_usuario));
+    const { data: totalGastosFixosParc } = useGetTotFixosParcelados(periodo, Number(id_usuario));
 
     useEffect(() => {
         if (totalGastosVariaveis !== undefined) {
@@ -64,8 +66,8 @@ const Dashboard = () => {
                 <ResumoDividasPorCredor periodo={periodo} />
             </div>
 
-            <div className="flex flex-col md:flex-row gap-6 h-full mb-5">
-                <div className="flex-1 min-h-[60vh] max-h-[60vh] flex flex-col">
+            <div className="flex flex-col md:flex-row gap-6 h-full">
+                <div className="flex-1 min-h-[60vh] max-h-[60vh] flex flex-col ">
                     <div className="flex flex-row justify-between">
                         <h1 className="font-medium text-[18px] mb-2">Gastos Fixos e Parcelados</h1>
                         <span className="font-semibold">{formatCurrency(totGastosFixosParc)}</span>

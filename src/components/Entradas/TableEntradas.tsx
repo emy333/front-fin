@@ -15,7 +15,9 @@ interface dataProps {
 }
 
 const TableEntradas: React.FC<dataProps> = ({ periodo }) => {
-    const { data, isLoading, isError } = useGetEntradas(periodo, 4);
+    const id_usuario = localStorage.getItem('userId');
+
+    const { data, isLoading, isError } = useGetEntradas(periodo, Number(id_usuario));
     const [localData, setLocalData] = useState<EntradasProps[]>([]);
     const [idClicked, setIdClicked] = useState(0);
     const [modalEditEntrada, setModalEditEntrada] = useState(false);

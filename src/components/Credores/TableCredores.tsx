@@ -8,7 +8,9 @@ interface CredoresProps {
 }
 
 const CardsCredores: React.FC = () => {
-    const { data, isLoading, isError } = useGetCredores(4);
+    const id_usuario = localStorage.getItem('userId');
+
+    const { data, isLoading, isError } = useGetCredores(Number(id_usuario));
     const [localData, setLocalData] = useState<CredoresProps[]>([]);
     const [idClicked, setIdClicked] = useState<number | null>(null);
     const [modalEditCredor, setModalEditCredor] = useState(false);

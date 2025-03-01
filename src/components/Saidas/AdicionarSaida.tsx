@@ -30,7 +30,7 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
 
     const id_usuario = localStorage.getItem('userId');
 
-    const { data: credores = [] } = useGetCredores(4);
+    const { data: credores = [] } = useGetCredores(Number(id_usuario));
     const [loading, setLoading] = useState(false);
 
     const formSchema = z.object({
@@ -53,9 +53,16 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
             },
             z.number().min(0.01, { message: "O valor deve ser maior que 0" })
         ),
-        parcela_atual: z.number().nullable().optional(),
-        tot_parcela: z.number().nullable().optional(),
-        data_vencimento: z.string().nullable().optional(),
+        parcela_atual: z.preprocess(val => val === "" ? null : val, z.number().nullable().optional()),
+        tot_parcela: z.preprocess(val => val === "" ? null : val, z.number().nullable().optional()),
+
+        data_vencimento: z.string().nonempty("A data de vencimento é obrigatória."),
+    }).refine(data => {
+        const { parcela_atual, tot_parcela } = data;
+        return (parcela_atual === null && tot_parcela === null) || (parcela_atual !== null && tot_parcela !== null);
+    }, {
+        message: "Se 'parcela_atual' for preenchido, 'tot_parcela' também deve ser, e vice-versa.",
+        path: ["parcela_atual", "tot_parcela"],
     });
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -206,7 +213,7 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                                 name="valor"
                                 render={({ field }) => (
                                     <FormItem className="flex-1">
-                                        <FormLabel>Valor *</FormLabel>
+                                        <FormLabel>Valor Total*</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="number"

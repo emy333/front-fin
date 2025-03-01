@@ -17,15 +17,15 @@ const CardsResumo: React.FC<dataProps> = ({ periodo }) => {
     const [totDespesas, setTotDespesas] = useState(0);
     const [totPagas, setTotPagas] = useState(0);
     const [totSaldo, setTotSaldo] = useState(0);
+    const id_usuario = localStorage.getItem('userId');
 
     useEffect(() => {
-        const userId = 4;
 
         const fetchData = async () => {
-            const orçamento = await getTotOrcamento(periodo, userId);
-            const despesas = await getTotDespesas(periodo, userId);
-            const totPagas = await getTotPagas(periodo, userId);
-            const totSaldo = await getTotSaldo(periodo, userId);
+            const orçamento = await getTotOrcamento(periodo, Number(id_usuario));
+            const despesas = await getTotDespesas(periodo, Number(id_usuario));
+            const totPagas = await getTotPagas(periodo, Number(id_usuario));
+            const totSaldo = await getTotSaldo(periodo, Number(id_usuario));
 
             setTotOrcamento(orçamento);
             setTotDespesas(despesas);

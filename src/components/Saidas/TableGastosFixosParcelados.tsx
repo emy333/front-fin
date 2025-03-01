@@ -23,8 +23,9 @@ interface dataProps {
 }
 
 const TableGastosFixosParcelados: React.FC<dataProps> = ({ periodo }) => {
+  const id_usuario = localStorage.getItem('userId');
 
-  const { data, isLoading, isError } = useGetGatosFixosParcelados(periodo, 4);
+  const { data, isLoading, isError } = useGetGatosFixosParcelados(periodo, Number(id_usuario));
   const [localData, setLocalData] = useState<GastosFixosParcelados[]>([]);
   const updateStatus = useUpdateStatusSaida();
   const [modalEditSaida, setModalEditSaida] = useState(false);

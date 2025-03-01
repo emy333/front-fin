@@ -9,8 +9,9 @@ interface dataProps {
 }
 
 const ResumoDividasPorCredor: React.FC<dataProps> = ({ periodo }) => {
+    const id_usuario = localStorage.getItem('userId');
 
-    const { data: credores, isLoading, isError } = useGetTotCredores(periodo, 4);
+    const { data: credores, isLoading, isError } = useGetTotCredores(periodo, Number(id_usuario));
 
     if (isLoading) return <div>Carregando...</div>;
     if (isError) return <div>Erro ao carregar credores.</div>;
@@ -27,7 +28,7 @@ const ResumoDividasPorCredor: React.FC<dataProps> = ({ periodo }) => {
                             credores.map((credor: any) => (
                                 <Card key={credor.id_credor}>
                                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                        <CardTitle className="text-[19px] font-medium">
+                                        <CardTitle className="text-[19px] uppercase font-medium">
                                             {credor.nome_credor}
                                         </CardTitle>
                                     </CardHeader>

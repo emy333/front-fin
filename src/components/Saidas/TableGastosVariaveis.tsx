@@ -23,7 +23,9 @@ interface dataProps {
 }
 
 const TableGastosVariaveis: React.FC<dataProps> = ({ periodo }) => {
-    const { data, isLoading, isError } = useGetGatosVariaveis(periodo, 4);
+    const id_usuario = localStorage.getItem('userId');
+
+    const { data, isLoading, isError } = useGetGatosVariaveis(periodo, Number(id_usuario));
     const [localData, setLocalData] = useState<GastosVariaveis[]>([]);
     const updateStatus = useUpdateStatusSaida();
     const [modalEditSaida, setModalEditSaida] = useState(false);

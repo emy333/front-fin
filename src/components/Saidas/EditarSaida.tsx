@@ -28,8 +28,9 @@ interface EditSaidaProps {
 }
 
 const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
+    const id_usuario = localStorage.getItem('userId');
 
-    const { data: credores = [] } = useGetCredores(4);
+    const { data: credores = [] } = useGetCredores(Number(id_usuario));
     const [loading, setLoading] = useState(false);
 
     const { data: dataSaida } = useGetDetalhesSaida(idSaida);
@@ -76,7 +77,7 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
         ),
         parcela_atual: z.number().nullable().optional(),
         tot_parcela: z.number().nullable().optional(),
-        data_vencimento: z.string().nullable().optional(),
+        data_vencimento: z.string().nullable(),
     });
 
     const form = useForm<z.infer<typeof formSchema>>({

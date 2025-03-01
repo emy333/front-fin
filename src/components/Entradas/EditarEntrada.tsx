@@ -25,6 +25,8 @@ interface EditaEntradaProps {
 const EditarEntrada: React.FC<EditaEntradaProps> = ({ open, setOpen, idEntrada }) => {
     const [loading, setLoading] = useState(false);
     const { toast } = useToast()
+    const id_usuario = localStorage.getItem('userId');
+
 
     const formSchema = z.object({
         descricao: z.string().min(1, { message: "Informe a descrição" }),
@@ -80,7 +82,7 @@ const EditarEntrada: React.FC<EditaEntradaProps> = ({ open, setOpen, idEntrada }
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         setLoading(true);
         const dados = {
-            id_usuario: 4,
+            id_usuario: id_usuario,
             data_referente: values.data_referente,
             descricao: values.descricao,
             valor: values.valor,
