@@ -51,12 +51,14 @@ const GatosFixosParcelados: React.FC<dataProps> = ({ periodo }) => {
                         {gasto.descricao.toUpperCase()}
                       </p>
 
-                      <div className="flex flex-col sm:flex-row sm:space-x-1 space-y-1 sm:space-y-0">
-                        <p className="text-sm dark:text-gray-300">
-                          {gasto.credor_descricao.toUpperCase()}
-                        </p>
+                      <div className="flex flex-col sm:flex-row gap-1">
+                        {gasto.credor_descricao && (
+                          <p className="text-sm dark:text-gray-300">
+                            {gasto.credor_descricao.toUpperCase()}
+                          </p>
+                        )}
                         <p className="text-sm text-gray-300">
-                          ({gasto.tipo_pagamento.toUpperCase()})
+                          {gasto.tipo_pagamento.toUpperCase()}
                         </p>
                       </div>
                     </div>
@@ -64,7 +66,6 @@ const GatosFixosParcelados: React.FC<dataProps> = ({ periodo }) => {
                     <div className="w-full sm:w-1/4 text-right font-semibold text-lg mt-2 sm:mt-0">
                       {formatCurrency(gasto.valor)}
                     </div>
-
                   </div>
                 ))}
               </div>

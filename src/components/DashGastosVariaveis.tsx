@@ -46,17 +46,19 @@ const GatosVariaveis: React.FC<dataProps> = ({ periodo }) => {
                         : "bg-slate-500 dark:bg-slate-500"
                     }`}
                   >
-                    <div className="flex flex-col space-y-2 w-full sm:w-2/3">
+                    <div className="flex flex-col space-y-1 w-full sm:w-2/3">
                       <p className="text-lg font-medium dark:text-white">
                         {gasto.descricao.toUpperCase()}
                       </p>
 
-                      <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-1 sm:space-y-0">
-                        <p className="text-sm dark:text-gray-300">
-                          {gasto.credor_descricao.toUpperCase()}
-                        </p>
+                      <div className="flex flex-col sm:flex-row gap-1">
+                        {gasto.credor_descricao && (
+                          <p className="text-sm dark:text-gray-300">
+                            {gasto.credor_descricao.toUpperCase()}
+                          </p>
+                        )}
                         <p className="text-sm text-gray-300">
-                          ({gasto.tipo_pagamento.toUpperCase()})
+                          {gasto.tipo_pagamento.toUpperCase()}
                         </p>
                       </div>
                     </div>

@@ -7,11 +7,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, Eye, EyeOff } from "lucide-react";
 import axiosInstance from "@/services/api";
 import { useNavigate } from "react-router-dom";
-import { toast } from 'sonner';
-import { Eye, EyeOff } from "lucide-react";
+import { toast } from "sonner";
 
 const registerSchema = z.object({
   name: z.string().min(1, "Digite seu nome completo"),
@@ -40,7 +39,6 @@ export function Cadastro({ className, ...props }: React.ComponentProps<"div">) {
 
   const onSubmit = async (data: any) => {
     setIsLoading(true);
-
     try {
       const response = await axiosInstance.post("/usuarios", {
         nome_completo: data.name,
@@ -59,9 +57,8 @@ export function Cadastro({ className, ...props }: React.ComponentProps<"div">) {
     }
   };
 
-
   return (
-    <div className={cn("flex flex-col gap-6 min-h-screen justify-center items-center", className)} {...props}>
+    <div className={cn("flex flex-col gap-6 min-h-screen justify-center items-center p-4", className)} {...props}>
       <Button
         onClick={() => setDarkMode(!darkMode)}
         className="absolute top-4 right-4"
@@ -69,16 +66,19 @@ export function Cadastro({ className, ...props }: React.ComponentProps<"div">) {
       >
         {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
       </Button>
-      <Card className="overflow-hidden w-full max-w-4xl shadow-lg min-h-[80vh]">
+      
+      <Card className="overflow-hidden w-full max-w-lg md:max-w-4xl shadow-lg">
         <CardContent className="grid p-0 md:grid-cols-2 h-full">
-          <form onSubmit={handleSubmit(onSubmit)} className="p-6 md:p-8 flex flex-col justify-center h-full">
+          {/* Formulário */}
+          <form onSubmit={handleSubmit(onSubmit)} className="p-4 md:p-8 flex flex-col justify-center w-full">
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center text-center">
-                <h1 className="text-3xl font-bold">Bem-vindo ao FinFácil</h1>
-                <p className="text-lg text-zinc-500 dark:text-zinc-400">
+                <h1 className="text-2xl md:text-3xl font-bold">Bem-vindo ao FinFácil</h1>
+                <p className="text-md md:text-lg text-zinc-500 dark:text-zinc-400">
                   Controle suas finanças de forma simples.
                 </p>
               </div>
+
               {/* Nome Completo */}
               <div className="grid gap-3">
                 <Label htmlFor="name">Nome Completo</Label>
@@ -87,7 +87,7 @@ export function Cadastro({ className, ...props }: React.ComponentProps<"div">) {
                   type="text"
                   placeholder="Digite seu nome completo"
                   {...register("name")}
-                  className="h-12 text-lg"
+                  className="w-full h-12 text-lg"
                 />
                 {errors.name?.message && <p className="text-red-500 text-sm">{String(errors.name.message)}</p>}
               </div>
@@ -100,7 +100,7 @@ export function Cadastro({ className, ...props }: React.ComponentProps<"div">) {
                   type="email"
                   placeholder="Digite um e-mail"
                   {...register("email")}
-                  className="h-12 text-lg"
+                  className="w-full h-12 text-lg"
                 />
                 {errors.email?.message && <p className="text-red-500 text-sm">{String(errors.email.message)}</p>}
               </div>
@@ -114,7 +114,7 @@ export function Cadastro({ className, ...props }: React.ComponentProps<"div">) {
                     type={showPassword ? "text" : "password"}
                     placeholder="Digite uma senha"
                     {...register("password")}
-                    className="h-12 text-lg pr-10"
+                    className="w-full h-12 text-lg pr-10"
                   />
                   <button
                     type="button"
@@ -127,7 +127,7 @@ export function Cadastro({ className, ...props }: React.ComponentProps<"div">) {
                 {errors.password?.message && <p className="text-red-500 text-sm">{String(errors.password.message)}</p>}
               </div>
 
-
+              {/* Botão de Cadastro */}
               <Button type="submit" className="w-full h-12 text-lg" disabled={isLoading}>
                 {isLoading ? "Cadastrando..." : "Cadastrar"}
               </Button>
@@ -140,16 +140,15 @@ export function Cadastro({ className, ...props }: React.ComponentProps<"div">) {
               </p>
             </div>
           </form>
-          <div className="relative hidden md:flex items-center justify-center bg-purple-100 dark:bg-purple-950 w-full min-h-[80vh]">
+
+          {/* Imagem - Oculta em telas pequenas */}
+          <div className="hidden md:flex items-center justify-center bg-purple-100 dark:bg-purple-950 w-full">
             <img
               src="/animacao.svg"
               alt="Gerencie suas finanças com facilidade"
               className="w-auto h-auto max-w-full max-h-full"
             />
           </div>
-
-
-
         </CardContent>
       </Card>
     </div>
