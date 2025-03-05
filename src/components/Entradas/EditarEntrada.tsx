@@ -20,9 +20,10 @@ interface EditaEntradaProps {
     open: boolean;
     setOpen: (value: boolean) => void;
     idEntrada: number;
+    refetch: () => void;
 }
 
-const EditarEntrada: React.FC<EditaEntradaProps> = ({ open, setOpen, idEntrada }) => {
+const EditarEntrada: React.FC<EditaEntradaProps> = ({ open, setOpen, idEntrada, refetch }) => {
     const [loading, setLoading] = useState(false);
     const { toast } = useToast()
     const id_usuario = localStorage.getItem('userId');
@@ -70,6 +71,7 @@ const EditarEntrada: React.FC<EditaEntradaProps> = ({ open, setOpen, idEntrada }
                     description: "Registro da entrada foi excluído com sucesso",
                 })
                 setOpen(false);
+                refetch();
             }
         } catch (e) {
             toast({
@@ -96,6 +98,7 @@ const EditarEntrada: React.FC<EditaEntradaProps> = ({ open, setOpen, idEntrada }
                     description: "Registro da entrada foi atualizado com sucesso",
                 });
                 setOpen(false);
+                refetch();
             }
         } catch (error) {
             console.error("Erro ao atualizar:", error);
