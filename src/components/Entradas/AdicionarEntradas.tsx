@@ -15,16 +15,19 @@ import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { ptBR } from "date-fns/locale";
 import axiosInstance from "@/services/api";
+import { useGetEntradas } from "@/hooks/entradas/useGetEntradas";
 
 interface AddEntradaProps {
     open: boolean;
     setOpen: (value: boolean) => void;
+    periodo: string;
 }
 
-const AdicionarEntradas: React.FC<AddEntradaProps> = ({ open, setOpen }) => {
+const AdicionarEntradas: React.FC<AddEntradaProps> = ({ open, setOpen, periodo }) => {
     const { toast } = useToast()
     const [loading, setLoading] = useState(false);
     const id_usuario = localStorage.getItem('userId');
+    const {refetch} = useGetEntradas(periodo, Number(id_usuario))
 
     const formSchema = z.object({
         descricao: z.string().min(1, { message: "Informe a descrição" }),
@@ -75,6 +78,7 @@ const AdicionarEntradas: React.FC<AddEntradaProps> = ({ open, setOpen }) => {
                     description: "Registro da entrada foi adicionado com sucesso",
                 })
                 setOpen(false);
+                refetch();
                 form.reset();
             }
 
@@ -85,6 +89,7 @@ const AdicionarEntradas: React.FC<AddEntradaProps> = ({ open, setOpen }) => {
             })
         } finally {
             setLoading(false);
+            refetch();
         }
 
     }

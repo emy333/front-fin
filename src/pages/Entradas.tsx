@@ -50,6 +50,7 @@ const Entradas = () => {
             <AdicionarEntradas
                 open={openAdd}
                 setOpen={setOpenAdd}
+                periodo={periodo} 
             />
         </MainLayout>
     )
