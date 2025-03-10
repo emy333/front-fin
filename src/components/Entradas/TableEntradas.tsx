@@ -56,7 +56,7 @@ const TableEntradas: React.FC<dataProps> = ({ periodo }) => {
                             onClick={() => handleClickEditar(entradas.id)}
                         >
                             <p className="text-lg font-semibold text-gray-900 dark:text-white uppercase">{entradas.descricao}</p>
-                            <p className="text-lg font-medium text-gray-900 dark:text-white uppercase">{formatCurrency(totalValue)}</p>
+                            <p className="text-lg font-medium text-gray-900 dark:text-white uppercase">{formatCurrency(entradas.valor)}</p>
 
                         </div>
                     ))
