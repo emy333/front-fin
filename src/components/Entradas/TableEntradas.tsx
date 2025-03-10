@@ -35,14 +35,11 @@ const TableEntradas: React.FC<dataProps> = ({ periodo }) => {
     }, [data]);
 
 
-  
-
     if (isLoading) return <div>Loading...</div>;
     if (isError) return <div>Error fetching data.</div>;
 
     return (
         <>
-
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ">
                 {localData.length > 0 ? (
                     localData.map((entradas: EntradasProps) => (
