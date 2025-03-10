@@ -35,11 +35,7 @@ const TableEntradas: React.FC<dataProps> = ({ periodo }) => {
     }, [data]);
 
 
-    const totalValue =
-        localData?.reduce((acc: number, gasto: EntradasProps) => {
-            const valor = parseFloat(gasto.valor.toString());
-            return acc + valor;
-        }, 0) || 0;
+  
 
     if (isLoading) return <div>Loading...</div>;
     if (isError) return <div>Error fetching data.</div>;
