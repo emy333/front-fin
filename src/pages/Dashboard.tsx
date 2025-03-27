@@ -67,7 +67,7 @@ const Dashboard = () => {
             </div>
 
             <div className="flex flex-col md:flex-row gap-6 h-full">
-                <div className="flex-1 min-h-[60vh] max-h-[60vh] flex flex-col ">
+                <div className="flex-1 flex flex-col ">
                     <div className="flex flex-row justify-between">
                         <h1 className="font-medium text-[18px] mb-2">Gastos Fixos e Parcelados</h1>
                         <span className="font-semibold">{formatCurrency(totGastosFixosParc)}</span>
@@ -77,7 +77,7 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-                <div className="flex-1 min-h-[60vh] max-h-[60vh] flex flex-col">
+                <div className="flex-1 flex flex-col">
                     <div className="flex flex-row justify-between">
                         <h1 className="font-medium text-[18px] mb-2">Gastos Variáveis</h1>
                         <span className="font-semibold">{formatCurrency(totGastosVariaveis)}</span>

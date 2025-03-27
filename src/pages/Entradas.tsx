@@ -22,7 +22,7 @@ const Entradas = () => {
         <MainLayout>
             <div className="flex justify-between items-center mb-5 ">
                 <div className="flex flex-row gap-4 items-center">
-                    <h1 className="text-[25px]">Entradas</h1>
+                <h1 className="text-[25px] sm:text-[25px] md:text-[25px]">Entradas</h1>
                 </div>
                 <div className="flex flex-row gap-2 text-center items-center">
                     <Button
@@ -30,7 +30,7 @@ const Entradas = () => {
                         onClick={() => setOpenAdd(true)}
                         className="flex flex-row gap-5 p-4 font-medium">
                         <MdAddCard />
-                        <span className="hidden sm:inline">Adicionar Entrada</span>
+                        <span className="hidden lg:inline">Adicionar Entrada</span>
                     </Button>
                     <FiltroPeriodo
                         selectedMonth={selectedMonth}

@@ -8,13 +8,13 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "../ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
-import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "../ui/calendar";
 import { ptBR } from "date-fns/locale";
-import { format } from "date-fns"
+import { format, parse } from "date-fns"
 import axiosInstance from "@/services/api";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
+import { formatarData } from "@/utils/formatDateInput";
 
 interface EditaEntradaProps {
     open: boolean;
@@ -25,9 +25,7 @@ interface EditaEntradaProps {
 
 const EditarEntrada: React.FC<EditaEntradaProps> = ({ open, setOpen, idEntrada, refetch }) => {
     const [loading, setLoading] = useState(false);
-    const { toast } = useToast()
     const id_usuario = localStorage.getItem('userId');
-
 
     const formSchema = z.object({
         descricao: z.string().min(1, { message: "Informe a descrição" }),
@@ -45,7 +43,6 @@ const EditarEntrada: React.FC<EditaEntradaProps> = ({ open, setOpen, idEntrada, 
             z.number().min(0.01, { message: "O valor deve ser maior que 0" })
         ),
         data_referente: z.string().nullable().optional(),
-
     });
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -53,11 +50,12 @@ const EditarEntrada: React.FC<EditaEntradaProps> = ({ open, setOpen, idEntrada, 
     });
     const { data: entrada } = useGetDetalhesEntradas(idEntrada);
 
+
     useEffect(() => {
         if (entrada) {
             form.setValue("descricao", entrada.descricao);
             form.setValue("valor", entrada.valor);
-            form.setValue("data_referente", entrada.data_referente);
+            form.setValue("data_referente", formatarData(entrada.data_referente));
         }
     }, [entrada]);
 
@@ -66,18 +64,12 @@ const EditarEntrada: React.FC<EditaEntradaProps> = ({ open, setOpen, idEntrada, 
         try {
             const response = await axiosInstance.delete(`/entradas/${idEntrada}`);
             if (response.status === 200) {
-                toast({
-                    title: "Sucesso ao excluir a entrada!",
-                    description: "Registro da entrada foi excluído com sucesso",
-                })
+                toast.success("Sucesso ao excluir a entrada!")
                 setOpen(false);
                 refetch();
             }
         } catch (e) {
-            toast({
-                title: "Ocorreu um erro ao excluir a entrada!",
-                description: "Lamentamos o imprevisto, tente novamente mais tarde.",
-            })
+            toast.error("Ocorreu um erro ao excluir a entrada!")
         }
     }
 
@@ -93,19 +85,13 @@ const EditarEntrada: React.FC<EditaEntradaProps> = ({ open, setOpen, idEntrada, 
         try {
             const response = await axiosInstance.put(`/entradas/${idEntrada}`, dados);
             if (response.status === 200) {
-                toast({
-                    title: "Entrada atualizada com sucesso!",
-                    description: "Registro da entrada foi atualizado com sucesso",
-                });
+                toast.success("Entrada atualizada com sucesso!");
                 setOpen(false);
                 refetch();
             }
         } catch (error) {
             console.error("Erro ao atualizar:", error);
-            toast({
-                title: "Erro ao atualizar entrada",
-                description: "Ocorreu um erro ao atualizar o registro. Tente novamente.",
-            });
+            toast.error("Erro ao atualizar entrada");
         } finally {
             setLoading(false);
         }
@@ -121,7 +107,7 @@ const EditarEntrada: React.FC<EditaEntradaProps> = ({ open, setOpen, idEntrada, 
 
                 <Form {...form}>
                     <form className="space-y-3" onSubmit={form.handleSubmit(onSubmit)}>
-                        <div className="flex flex-col sm:flex-row gap-4">
+                        <div className="flex gap-2 mt-2">
                             <FormField
                                 control={form.control}
                                 name="descricao"
@@ -130,6 +116,8 @@ const EditarEntrada: React.FC<EditaEntradaProps> = ({ open, setOpen, idEntrada, 
                                         <FormLabel>Descrição *</FormLabel>
                                         <FormControl>
                                             <Input placeholder="" {...field}
+                                                className=" justify-start text-left font-normal border border-stone-700 rounded-lg"
+
                                                 onChange={(e) => field.onChange(e.target.value)}
                                             />
                                         </FormControl>
@@ -139,36 +127,34 @@ const EditarEntrada: React.FC<EditaEntradaProps> = ({ open, setOpen, idEntrada, 
                             />
                         </div>
 
-                        <div className="flex flex-col sm:flex-row gap-4">
+                        <div className="flex gap-2 mt-2">
 
                             <FormField
                                 control={form.control}
                                 name="data_referente"
                                 render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel className="flex flex-col">Data</FormLabel>
+                                    <FormItem className="space-y-2 flex flex-col flex-1">
+                                        <FormLabel className="mb-1">Data *</FormLabel>
                                         <FormControl>
                                             <Popover>
                                                 <PopoverTrigger asChild>
                                                     <Button
-                                                        variant={"outline"}
-                                                        className={cn(
-                                                            "w-full sm:w-auto justify-start text-left font-normal",
-                                                            !field.value && "text-muted-foreground"
-                                                        )}
+                                                        variant="outline"
+                                                        className=" justify-start text-left font-normal border border-stone-700 rounded-lg"
                                                     >
-                                                        <CalendarIcon className="mr-2 h-4 w-4" />
-                                                        {field.value
-                                                            ? format(new Date(field.value), "dd/MM/yyyy", { locale: ptBR })
-                                                            : <span>Selecione uma data</span>}
+                                                        <CalendarIcon className="mr-2" />
+                                                        {field.value ? field.value : <span>Data</span>}
                                                     </Button>
                                                 </PopoverTrigger>
                                                 <PopoverContent className="w-auto p-0">
                                                     <Calendar
                                                         mode="single"
-                                                        selected={field.value ? new Date(field.value) : undefined}
+                                                        selected={field.value ? parse(field.value, "dd/MM/yyyy", new Date()) : undefined}
                                                         onSelect={(selectedDate) => {
-                                                            field.onChange(selectedDate ? selectedDate.toISOString() : "");
+                                                            if (selectedDate) {
+                                                                const formattedDate = format(selectedDate, "dd/MM/yyyy");
+                                                                field.onChange(formattedDate);
+                                                            }
                                                         }}
                                                         locale={ptBR}
                                                         initialFocus
@@ -181,14 +167,18 @@ const EditarEntrada: React.FC<EditaEntradaProps> = ({ open, setOpen, idEntrada, 
                                 )}
                             />
 
+
+
                             <FormField
                                 control={form.control}
                                 name="valor"
                                 render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel>Valor</FormLabel>
+                                    <FormItem className="space-y-2 flex flex-col flex-1">
+                                        <FormLabel className="mb-1">Valor</FormLabel>
                                         <FormControl>
                                             <Input
+                                                className=" justify-start text-left font-normal border border-stone-700 rounded-lg"
+
                                                 type="number"
                                                 placeholder="Informe o valor"
                                                 {...field}

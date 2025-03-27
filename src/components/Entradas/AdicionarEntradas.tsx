@@ -3,7 +3,6 @@ import { Dialog, DialogContent, DialogFooter } from "../ui/dialog";
 import { DialogHeader } from "../ui/dialog";
 import { useState } from "react";
 import { z } from "zod";
-import { useToast } from "@/hooks/use-toast";
 import { Input } from "../ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -11,11 +10,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "../ui/calendar";
-import { format } from "date-fns"
-import { cn } from "@/lib/utils"
 import { ptBR } from "date-fns/locale";
 import axiosInstance from "@/services/api";
 import { useGetEntradas } from "@/hooks/entradas/useGetEntradas";
+import { format, parse } from "date-fns";
+import { toast } from "sonner";
 
 interface AddEntradaProps {
     open: boolean;
@@ -24,10 +23,9 @@ interface AddEntradaProps {
 }
 
 const AdicionarEntradas: React.FC<AddEntradaProps> = ({ open, setOpen, periodo }) => {
-    const { toast } = useToast()
     const [loading, setLoading] = useState(false);
     const id_usuario = localStorage.getItem('userId');
-    const {refetch} = useGetEntradas(periodo, Number(id_usuario))
+    const { refetch } = useGetEntradas(periodo, Number(id_usuario))
 
     const formSchema = z.object({
         descricao: z.string().min(1, { message: "Informe a descrição" }),
@@ -45,7 +43,8 @@ const AdicionarEntradas: React.FC<AddEntradaProps> = ({ open, setOpen, periodo }
             z.number().min(0.01, { message: "O valor deve ser maior que 0" })
         ),
 
-        data_referente: z.string().nullable().optional(),
+        data_referente: z.string().nonempty("A data é obrigatória."),
+
     });
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -58,9 +57,6 @@ const AdicionarEntradas: React.FC<AddEntradaProps> = ({ open, setOpen, periodo }
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        if (values.data_referente) {
-            values.data_referente = format(new Date(values.data_referente), "dd/MM/yyyy");
-        }
 
         const data = {
             id_usuario: id_usuario,
@@ -73,20 +69,14 @@ const AdicionarEntradas: React.FC<AddEntradaProps> = ({ open, setOpen, periodo }
         try {
             const response = await axiosInstance.post("/entradas", data);
             if (response.status === 201) {
-                toast({
-                    title: "Sucesso ao adicionar a entrada!",
-                    description: "Registro da entrada foi adicionado com sucesso",
-                })
+                toast.success("Sucesso ao adicionar a entrada!")
                 setOpen(false);
                 refetch();
                 form.reset();
             }
 
         } catch (e) {
-            toast({
-                title: "Ocorreu um erro ao adicionar a entrada!",
-                description: "Lamentamos o imprevisto, tente novamente mais tarde.",
-            })
+            toast.error("Ocorreu um erro ao adicionar a entrada!")
         } finally {
             setLoading(false);
             refetch();
@@ -98,11 +88,11 @@ const AdicionarEntradas: React.FC<AddEntradaProps> = ({ open, setOpen, periodo }
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent className="sm:max-w-[50%]">
                 <DialogHeader>
-                    <h1 className="font-bold text-lg">Adicionar Entrada</h1> 
+                    <h1 className="font-bold text-lg">Adicionar Entrada</h1>
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-                        <div className="flex flex-col sm:flex-row gap-4">
+                        <div className="flex gap-2 mt-2">
                             <FormField
                                 control={form.control}
                                 name="descricao"
@@ -110,42 +100,45 @@ const AdicionarEntradas: React.FC<AddEntradaProps> = ({ open, setOpen, periodo }
                                     <FormItem className="flex-1">
                                         <FormLabel>Descrição *</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="" {...field} />
+                                            <Input placeholder="" {...field}
+                                                className="justify-start text-left font-normal border border-stone-700 rounded-lg"
+
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
                         </div>
-                        <div className="flex flex-col sm:flex-row gap-4">
+
+                        <div className="flex gap-2 mt-2">
+
                             <FormField
                                 control={form.control}
                                 name="data_referente"
                                 render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel className="flex flex-col">Data *</FormLabel>
+                                    <FormItem className="space-y-2 flex flex-col flex-1">
+                                        <FormLabel className="mb-1">Data *</FormLabel>
                                         <FormControl>
                                             <Popover>
                                                 <PopoverTrigger asChild>
                                                     <Button
-                                                        variant={"outline"}
-                                                        className={cn(
-                                                            "w-full sm:w-auto justify-start text-left font-normal",
-                                                            !field.value && "text-muted-foreground"
-                                                        )}
+                                                        variant="outline"
+                                                        className=" justify-start text-left font-normal border border-stone-700 rounded-lg"
                                                     >
-                                                        <CalendarIcon className="mr-2 h-4 w-4" />
-                                                        {field.value
-                                                            ? format(new Date(field.value), "dd/MM/yyyy", { locale: ptBR })
-                                                            : <span>Selecione uma data</span>}
+                                                        <CalendarIcon className="mr-2" />
+                                                        {field.value ? field.value : <span>Data</span>}
                                                     </Button>
                                                 </PopoverTrigger>
                                                 <PopoverContent className="w-auto p-0">
                                                     <Calendar
                                                         mode="single"
-                                                        selected={field.value ? new Date(field.value) : undefined}
+                                                        selected={field.value ? parse(field.value, "dd/MM/yyyy", new Date()) : undefined}
                                                         onSelect={(selectedDate) => {
-                                                            field.onChange(selectedDate ? selectedDate.toISOString() : "");
+                                                            if (selectedDate) {
+                                                                const formattedDate = format(selectedDate, "dd/MM/yyyy");
+                                                                field.onChange(formattedDate);
+                                                            }
                                                         }}
                                                         locale={ptBR}
                                                         initialFocus
@@ -162,12 +155,13 @@ const AdicionarEntradas: React.FC<AddEntradaProps> = ({ open, setOpen, periodo }
                                 control={form.control}
                                 name="valor"
                                 render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel>Valor *</FormLabel>
+                                    <FormItem className="space-y-2 flex flex-col flex-1">
+                                        <FormLabel className="mb-1">Valor *</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="number"
                                                 placeholder="Informe o valor"
+                                                className="justify-start text-left font-normal border border-stone-700 rounded-lg"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -177,6 +171,9 @@ const AdicionarEntradas: React.FC<AddEntradaProps> = ({ open, setOpen, periodo }
                             />
 
                         </div>
+
+
+
                         <DialogFooter>
                             <Button
                                 type="submit"
@@ -196,7 +193,7 @@ const AdicionarEntradas: React.FC<AddEntradaProps> = ({ open, setOpen, periodo }
                                         </svg>
                                         Salvando ...
                                     </>
-                                ) : ( 
+                                ) : (
                                     <>
                                         Salvar
                                     </>

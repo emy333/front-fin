@@ -244,7 +244,7 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                                                         className={cn(
                                                             "w-full sm:w-auto justify-start text-left font-normal",
                                                             !field.value && "text-muted-foreground"
-                                                        )}
+                                                        )} 
                                                     >
                                                         <CalendarIcon className="mr-2 h-4 w-4" />
                                                         {field.value
@@ -260,7 +260,7 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                                                             field.onChange(selectedDate ? selectedDate.toISOString() : "");
                                                         }}
                                                         locale={ptBR}
-                                                        initialFocus
+                                                        initialFocus 
                                                     />
                                                 </PopoverContent>
                                             </Popover>

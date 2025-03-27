@@ -44,12 +44,12 @@ const FiltroPeriodo: React.FC<FiltroPeriodoProps> = ({ selectedMonth, setSelecte
   }, []);
 
   return (
-    <div className="flex gap-4">
+    <div className="flex gap-2">
       <Select value={selectedMonth} onValueChange={(value) => setSelectedMonth(value)}>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="lg:w-[180px]">
           <SelectValue placeholder="Selecionar Mês">
             {optionsMonth.find((option) => option.value === selectedMonth)?.label}
-          </SelectValue>
+          </SelectValue> 
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
@@ -63,7 +63,7 @@ const FiltroPeriodo: React.FC<FiltroPeriodoProps> = ({ selectedMonth, setSelecte
       </Select>
 
       <Select value={ano.toString()} onValueChange={(value) => setAno(Number(value))}>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="lg:w-[180px]">
           <SelectValue placeholder="Selecionar Ano">
             {optionsYear.find((option) => option.value === ano.toString())?.label}
           </SelectValue>

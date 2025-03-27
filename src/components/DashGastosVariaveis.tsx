@@ -35,7 +35,7 @@ const GatosVariaveis: React.FC<dataProps> = ({ periodo }) => {
       <Card className="col-span-3 text-white">
         <CardContent className="p-2 rounded-md ">
           {data && data.length > 0 ? (
-            <ScrollArea className="h-[60vh] overflow-auto p-2">
+            <ScrollArea className="max-h-[60vh] overflow-auto p-2">
               <div className="space-y-4 p-3">
                 {data.map((gasto: GastosVariaveis) => (
                   <div
