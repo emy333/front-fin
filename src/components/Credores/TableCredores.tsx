@@ -4,6 +4,7 @@ import EditarCredor from "./EditarCredores";
 import { Card, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import { Pencil, Trash2 } from "lucide-react";
+import { DeleteCredor } from "./modalDelete";
 
 interface CredoresProps {
     id_credor: number;
@@ -13,10 +14,11 @@ interface CredoresProps {
 const CardsCredores: React.FC = () => {
     const id_usuario = localStorage.getItem('userId');
 
-    const { data, isLoading, isError } = useGetCredores(Number(id_usuario));
+    const { data, isLoading, isError, refetch } = useGetCredores(Number(id_usuario));
     const [localData, setLocalData] = useState<CredoresProps[]>([]);
     const [idClicked, setIdClicked] = useState<number | null>(null);
     const [modalEditCredor, setModalEditCredor] = useState(false);
+    const [modalDeleteCredor, setModalDeleteCredor] = useState(false);
 
     useEffect(() => {
         if (data) {
@@ -28,6 +30,12 @@ const CardsCredores: React.FC = () => {
         setIdClicked(id);
         setModalEditCredor(true);
     };
+
+    const handleClickDeletar = (id: number) => {
+        setIdClicked(id);
+        setModalDeleteCredor(true);
+    };
+
 
     if (isLoading) return <div>Loading...</div>;
     if (isError) return <div>Error fetching data.</div>;
@@ -63,7 +71,7 @@ const CardsCredores: React.FC = () => {
 
                                     <Button
                                         className="w-9 h-9 flex items-center justify-center rounded-lg transition bg-red-600 text-white hover:bg-red-500 dark:bg-red-800 dark:text-white"
-                                        onClick={() => handleClickEditar(credor.id_credor)}
+                                        onClick={() => handleClickDeletar(credor.id_credor)}
                                     >
                                         <Trash2 size={18} />
                                     </Button>
@@ -83,8 +91,19 @@ const CardsCredores: React.FC = () => {
                     open={modalEditCredor}
                     setOpen={() => setModalEditCredor(false)}
                     idCredor={idClicked}
+                    refetch={refetch}
                 />
             )}
+            {modalDeleteCredor && idClicked !== null && (
+                <DeleteCredor
+                    open={modalDeleteCredor}
+                    setOpen={() => setModalDeleteCredor(false)}
+                    idClicked={idClicked}
+                    refetch={refetch}
+                />
+            )}
+
+
         </>
     );
 };

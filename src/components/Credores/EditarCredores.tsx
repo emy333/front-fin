@@ -15,9 +15,10 @@ interface EditaCredorProps {
     open: boolean;
     setOpen: (value: boolean) => void;
     idCredor: number;
+    refetch: () => void;
 }
 
-const EditarCredor: React.FC<EditaCredorProps> = ({ open, setOpen, idCredor }) => {
+const EditarCredor: React.FC<EditaCredorProps> = ({ open, setOpen, idCredor, refetch }) => {
     const [loading, setLoading] = useState(false);
     const { toast } = useToast()
     const id_usuario = localStorage.getItem('userId');
@@ -30,7 +31,6 @@ const EditarCredor: React.FC<EditaCredorProps> = ({ open, setOpen, idCredor }) =
         resolver: zodResolver(formSchema),
     });
     const { data: credor } = useGetDetalhesCredores(idCredor);
-    const { refetch } = useGetCredores(Number(id_usuario))
 
     useEffect(() => {
         if (credor) {
@@ -40,24 +40,6 @@ const EditarCredor: React.FC<EditaCredorProps> = ({ open, setOpen, idCredor }) =
     }, [credor]);
 
 
-    const deleteCredor = async () => {
-        try {
-            const response = await axiosInstance.delete(`/credores/${idCredor}`);
-            if (response.status === 200) {
-                toast({
-                    title: "Sucesso ao excluir o credor!",
-                    description: "Registro do credor foi excluído com sucesso",
-                })
-                refetch();
-                setOpen(false);
-            }
-        } catch (e) {
-            toast({
-                title: "Ocorreu um erro ao excluir o credor!",
-                description: "Lamentamos o imprevisto, tente novamente mais tarde.",
-            })
-        }
-    }
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         setLoading(true);
@@ -118,13 +100,7 @@ const EditarCredor: React.FC<EditaCredorProps> = ({ open, setOpen, idCredor }) =
 
 
                         <DialogFooter>
-                            <Button
-                                type="button"
-                                variant="destructive"
-                                onClick={deleteCredor}
-                            >
-                                Excluir
-                            </Button>
+                       
                             <Button
                                 type="submit"
                                 disabled={loading}

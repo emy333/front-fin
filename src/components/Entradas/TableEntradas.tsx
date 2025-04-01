@@ -78,7 +78,7 @@ const TableEntradas: React.FC<dataProps> = ({ periodo }) => {
 
                                 <div className="flex justify-end gap-1 mt-1">
                                     <Button
-                                        className="w-9 h-9 flex items-center justify-center rounded-lg transition border "
+                                        className="w-9 h-9 flex items-center justify-center rounded-lg transition border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
                                         variant={"secondary"}
                                         onClick={() => handleClickEditar(entradas.id)}
                                     >

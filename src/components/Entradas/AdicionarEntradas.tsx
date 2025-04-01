@@ -6,15 +6,11 @@ import { z } from "zod";
 import { Input } from "../ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "../ui/calendar";
-import { ptBR } from "date-fns/locale";
 import axiosInstance from "@/services/api";
 import { useGetEntradas } from "@/hooks/entradas/useGetEntradas";
-import { format, parse } from "date-fns";
 import { toast } from "sonner";
+import { format, parseISO } from "date-fns";
 
 interface AddEntradaProps {
     open: boolean;
@@ -57,6 +53,11 @@ const AdicionarEntradas: React.FC<AddEntradaProps> = ({ open, setOpen, periodo }
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
+
+        if (values.data_referente) {
+            const dataISO = parseISO(values.data_referente);
+            values.data_referente = format(dataISO, "yyyy-MM-dd");
+        }
 
         const data = {
             id_usuario: id_usuario,
@@ -111,7 +112,7 @@ const AdicionarEntradas: React.FC<AddEntradaProps> = ({ open, setOpen, periodo }
                             />
                         </div>
 
-                        <div className="flex gap-2 mt-2">
+                        <div className="flex flex-col sm:flex-row gap-4">
 
                             <FormField
                                 control={form.control}
@@ -120,31 +121,11 @@ const AdicionarEntradas: React.FC<AddEntradaProps> = ({ open, setOpen, periodo }
                                     <FormItem className="space-y-2 flex flex-col flex-1">
                                         <FormLabel className="mb-1">Data *</FormLabel>
                                         <FormControl>
-                                            <Popover>
-                                                <PopoverTrigger asChild>
-                                                    <Button
-                                                        variant="outline"
-                                                        className=" justify-start text-left font-normal border border-stone-700 rounded-lg"
-                                                    >
-                                                        <CalendarIcon className="mr-2" />
-                                                        {field.value ? field.value : <span>Data</span>}
-                                                    </Button>
-                                                </PopoverTrigger>
-                                                <PopoverContent className="w-auto p-0">
-                                                    <Calendar
-                                                        mode="single"
-                                                        selected={field.value ? parse(field.value, "dd/MM/yyyy", new Date()) : undefined}
-                                                        onSelect={(selectedDate) => {
-                                                            if (selectedDate) {
-                                                                const formattedDate = format(selectedDate, "dd/MM/yyyy");
-                                                                field.onChange(formattedDate);
-                                                            }
-                                                        }}
-                                                        locale={ptBR}
-                                                        initialFocus
-                                                    />
-                                                </PopoverContent>
-                                            </Popover>
+                                            <Input
+                                                type="date"
+                                                {...field}
+                                                className="p-3 border border-stone-700 rounded-lg shadow-sm focus:outline-none focus:ring-2 transition duration-300 ease-in-out dark:text-white"
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

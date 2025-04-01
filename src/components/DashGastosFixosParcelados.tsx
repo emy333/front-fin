@@ -40,16 +40,19 @@ const GatosFixosParcelados: React.FC<dataProps> = ({ periodo }) => {
                 {data.map((gasto: GastosFixosParcelados) => (
                   <div
                     key={gasto.descricao}
-                    className={`flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 rounded-lg shadow-md min-h-20 ${
-                      gasto.pago
+                    className={`flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 rounded-lg shadow-md min-h-20 ${gasto.pago
                         ? "bg-green-600 dark:bg-green-800"
                         : "bg-slate-500 dark:bg-slate-500"
-                    }`}
+                      }`}
                   >
                     <div className="flex flex-col space-y-1 w-full sm:w-2/3">
-                      <p className="text-lg font-medium dark:text-white">
-                        {gasto.descricao.toUpperCase()}
-                      </p>
+                      <div className="flex gap-2 items-center">
+                        <p className="text-lg font-medium dark:text-white">
+                          {gasto.descricao.toUpperCase()}
+                        </p>
+                        <span className="text-lg"> {parseInt(gasto.total_parcela) > 1 ? `${gasto.parcela_atual}/${gasto.total_parcela}` : ""}</span>
+                      </div>
+
 
                       <div className="flex flex-col sm:flex-row gap-1">
                         {gasto.credor_descricao && (

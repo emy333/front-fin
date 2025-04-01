@@ -75,3 +75,15 @@
   text-decoration: none !important;
 }
 
+input[type="date"]::-webkit-calendar-picker-indicator {
+  color: transparent; 
+}
+
+.light input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0); 
+}
+
+/* Modo escuro */
+.dark input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1); 
+}

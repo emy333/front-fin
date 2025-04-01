@@ -9,16 +9,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useGetCredores } from "@/hooks/useGetCredores";
-import { ptBR } from "date-fns/locale";
 import "react-datepicker/dist/react-datepicker.css";
-import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { format, parseISO } from "date-fns"
 import axiosInstance from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
 import { tiposPagamento, categoria } from "@/constants";
+import { ScrollArea } from "../ui/scroll-area";
 
 
 interface AddSaidaProps {
@@ -86,7 +82,8 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         if (values.data_vencimento) {
-            values.data_vencimento = format(new Date(values.data_vencimento), "dd/MM/yyyy");
+            const dataISO = parseISO(values.data_vencimento);
+            values.data_vencimento = format(dataISO, "yyyy-MM-dd");
         }
 
         const data = {
@@ -143,7 +140,7 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                                     <FormItem className="flex-1">
                                         <FormLabel>Descrição *</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="" {...field} />
+                                            <Input className=" border-stone-700 " placeholder="" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -160,15 +157,17 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                                                 value={field.value}
                                                 onValueChange={field.onChange}
                                             >
-                                                <SelectTrigger>
+                                                <SelectTrigger className=" border-stone-700 ">
                                                     <SelectValue placeholder="Selecione o tipo de pagamento" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {tiposPagamento.map((tipo) => (
-                                                        <SelectItem key={tipo.value} value={tipo.value}>
-                                                            {tipo.descricao}
-                                                        </SelectItem>
-                                                    ))}
+                                                    <ScrollArea className="h-[20vh] p-2">
+                                                        {tiposPagamento.map((tipo) => (
+                                                            <SelectItem key={tipo.value} value={tipo.value} className="uppercase">
+                                                                {tipo.descricao}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </ScrollArea>
                                                 </SelectContent>
                                             </Select>
                                         </FormControl>
@@ -190,18 +189,29 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                                                 value={field.value ? String(field.value) : "Selecionar Credor"}
                                                 onValueChange={field.onChange}
                                             >
-                                                <SelectTrigger>
+                                                <SelectTrigger className=" border-stone-700 ">
                                                     <SelectValue>
                                                         {credores.find((credor: any) => String(credor.id_credor) === field.value)?.descricao || "Selecione o credor"}
                                                     </SelectValue>
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {credores.map((credor: any) => (
-                                                        <SelectItem key={String(credor.id_credor)} value={String(credor.id_credor)}>
-                                                            {credor.descricao}
-                                                        </SelectItem>
-                                                    ))}
+                                                    <ScrollArea className="h-[20vh] p-2">
+                                                        {credores.length > 0 ? (
+                                                            credores.map((credor: any) => (
+                                                                <SelectItem
+                                                                    key={String(credor.id_credor)}
+                                                                    value={String(credor.id_credor)}
+                                                                    className="uppercase"
+                                                                >
+                                                                    {credor.descricao}
+                                                                </SelectItem>
+                                                            ))
+                                                        ) : (
+                                                            <p className="text-center">Nenhum credor encontrado</p>
+                                                        )}
+                                                    </ScrollArea>
                                                 </SelectContent>
+
                                             </Select>
                                         </FormControl>
                                         <FormMessage />
@@ -213,9 +223,10 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                                 name="valor"
                                 render={({ field }) => (
                                     <FormItem className="flex-1">
-                                        <FormLabel>Valor Total*</FormLabel>
+                                        <FormLabel>Valor Total *</FormLabel>
                                         <FormControl>
                                             <Input
+                                                className=" border-stone-700 "
                                                 type="number"
                                                 placeholder="Informe o valor"
                                                 {...field}
@@ -229,41 +240,18 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-4">
-
                             <FormField
                                 control={form.control}
                                 name="data_vencimento"
                                 render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel className="flex flex-col">Data (Vencimento/Pagamento)</FormLabel>
+                                    <FormItem className="flex-1 space-y-2">
+                                        <FormLabel>Data da Movimentação *</FormLabel>
                                         <FormControl>
-                                            <Popover>
-                                                <PopoverTrigger asChild>
-                                                    <Button
-                                                        variant={"outline"}
-                                                        className={cn(
-                                                            "w-full sm:w-auto justify-start text-left font-normal",
-                                                            !field.value && "text-muted-foreground"
-                                                        )} 
-                                                    >
-                                                        <CalendarIcon className="mr-2 h-4 w-4" />
-                                                        {field.value
-                                                            ? format(new Date(field.value), "dd/MM/yyyy", { locale: ptBR })
-                                                            : <span>Selecione uma data</span>}
-                                                    </Button>
-                                                </PopoverTrigger>
-                                                <PopoverContent className="w-auto p-0">
-                                                    <Calendar
-                                                        mode="single"
-                                                        selected={field.value ? new Date(field.value) : undefined}
-                                                        onSelect={(selectedDate) => {
-                                                            field.onChange(selectedDate ? selectedDate.toISOString() : "");
-                                                        }}
-                                                        locale={ptBR}
-                                                        initialFocus 
-                                                    />
-                                                </PopoverContent>
-                                            </Popover>
+                                            <Input
+                                                type="date"
+                                                {...field}
+                                                className="p-3 border border-stone-700 rounded-lg shadow-sm focus:outline-none focus:ring-2 transition duration-300 ease-in-out dark:text-white"
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -274,19 +262,21 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                                 control={form.control}
                                 name="categoria"
                                 render={({ field }) => (
-                                    <FormItem className="flex-1">
+                                    <FormItem className="flex-1 space-y-2">
                                         <FormLabel>Categoria</FormLabel>
                                         <FormControl>
                                             <Select value={field.value} onValueChange={field.onChange}>
-                                                <SelectTrigger>
+                                                <SelectTrigger className="p-3 border border-stone-700">
                                                     <SelectValue placeholder="Selecione a Categoria" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {categoria.map((categoria) => (
-                                                        <SelectItem key={categoria.value} value={categoria.value}>
-                                                            {categoria.descricao}
-                                                        </SelectItem>
-                                                    ))}
+                                                    <ScrollArea className="h-[20vh] p-2">
+                                                        {categoria.map((categoria) => (
+                                                            <SelectItem className="uppercase" key={categoria.value} value={categoria.value}>
+                                                                {categoria.descricao}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </ScrollArea>
                                                 </SelectContent>
                                             </Select>
                                         </FormControl>
@@ -294,8 +284,6 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                                     </FormItem>
                                 )}
                             />
-
-
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-4">
@@ -307,6 +295,7 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                                         <FormLabel>Parcela Atual</FormLabel>
                                         <FormControl>
                                             <Input
+                                                className=" border-stone-700 "
                                                 type="number"
                                                 value={field.value ?? ''}
                                                 onChange={(e) => {
@@ -328,6 +317,7 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                                         <FormLabel>Total de Parcela</FormLabel>
                                         <FormControl>
                                             <Input
+                                                className=" border-stone-700 "
                                                 type="number"
                                                 value={field.value ?? ''}
                                                 onChange={(e) => {
@@ -343,20 +333,20 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                             />
                         </div>
 
-                        <div className="flex flex-col sm:flex-row gap-4 items-center sm:items-start">
+                        <div className="flex flex-col sm:flex-row gap-4 items-center">
                             <FormField
                                 control={form.control}
                                 name="gasto_fixo"
                                 render={({ field }) => (
                                     <FormItem className="flex-1">
-                                        <FormLabel>Gasto Fixo?</FormLabel>
+                                        <FormLabel>Gasto recorrente?</FormLabel>
                                         <FormControl>
                                             <Select
                                                 {...field}
                                                 value={field.value !== undefined ? String(field.value) : ""}
                                                 onValueChange={(value) => field.onChange(value === "true")}
                                             >
-                                                <SelectTrigger>
+                                                <SelectTrigger className=" border-stone-700 ">
                                                     <SelectValue placeholder="Selecione se é Gasto Fixo" />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -375,18 +365,22 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                                 name="pago"
                                 render={({ field }) => (
                                     <FormItem className="flex-1" >
-                                        <FormControl>
-                                            <Checkbox
-                                                checked={field.value}
-                                                onCheckedChange={field.onChange}
-                                            />
-                                        </FormControl>
-                                        <FormLabel className="pl-2">Selecione se o gasto já foi pago</FormLabel>
+                                        <div className="flex items-center">
+                                            <FormControl>
+                                                <Checkbox
+                                                    checked={field.value}
+                                                    onCheckedChange={field.onChange}
+                                                />
+                                            </FormControl>
+                                            <FormLabel className="pl-2">Já foi pago?</FormLabel>
+                                        </div>
+
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
                         </div>
+
                         <DialogFooter>
                             <Button
                                 type="submit"

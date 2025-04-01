@@ -4,6 +4,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useUpdateStatusSaida } from "@/hooks/usePutStatusSaida";
 import { useEffect, useState } from "react";
 import EditarSaida from "./EditarSaida";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { Ellipsis, FilePenLine } from "lucide-react";
 
 interface GastosVariaveis {
     id: number;
@@ -57,69 +59,77 @@ const TableGastosVariaveis: React.FC<dataProps> = ({ periodo }) => {
     if (isLoading) return <div>Loading...</div>;
     if (isError) return <div>Error fetching data.</div>;
 
-    const totalValue =
-        localData?.reduce((acc: number, gasto: GastosVariaveis) => {
-            const valor = parseFloat(gasto.valor.toString());
-            return acc + valor;
-        }, 0) || 0;
+    // const totalValue =
+    //     localData?.reduce((acc: number, gasto: GastosVariaveis) => {
+    //         const valor = parseFloat(gasto.valor.toString());
+    //         return acc + valor;
+    //     }, 0) || 0;
 
     const handleDetalhesSaida = (id: number) => {
         setIdClicked(id);
         setModalEditSaida(true);
     }
-    
+
 
     return (
-        <>
-            <div className="overflow-x-auto">
-                <table className="min-w-full table-auto text-sm">
-                    <thead>
-                        <tr className="bg-gray-100 dark:bg-gray-800">
-                            <th className="text-center">Pago?</th>
-                            <th className="px-4 py-2 text-left">Descrição</th>
-                            <th className="px-4 py-2 text-left">Credor</th>
-                            <th className="px-4 py-2 text-left">Tipo de Pagamento</th>
-                            <th className="px-4 py-2 text-left">Valor</th>
-                        </tr>
-                    </thead> 
-                    <tbody>
-                        {localData && localData.length > 0 ? (
-                            localData.map((gasto: GastosVariaveis) => (
-                                <tr
-                                    key={gasto.id}
-                                    onDoubleClick={() => handleDetalhesSaida(gasto.id)}
-                                    className={`${gasto.pago ? "bg-green-200 dark:bg-green-700" : ""
-                                        } transition duration-300`}
-                                >
-                                    <td className="text-center">
-                                        <Checkbox
-                                            checked={gasto.pago}
-                                            onClick={() => handleCheckboxChange(gasto.id, gasto.pago)}
+        <div className="shadow-md rounded-lg">
+            <table className="min-w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+                <thead>
+                    <tr className="bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
+                        <th className="p-3 text-center">Pago?</th>
+                        <th className="p-3 text-left">Descrição</th>
+                        <th className="p-3 text-left">Credor</th>
+                        <th className="p-3 text-left whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
+                            Tip. Pagamento
+                        </th>
+                        <th className="p-3 text-left">Valor</th>
+                        <th className="p-3 text-center"></th>
+                    </tr>
+                </thead> 
 
-                                        />
-                                    </td>
-                                    <td className="px-4 py-2">{gasto.descricao.toLocaleUpperCase()}</td>
-                                    <td className="px-4 py-2">{gasto.credor_descricao.toLocaleUpperCase()}</td>
-                                    <td className="px-4 py-2">{gasto.tipo_pagamento.toLocaleUpperCase()}</td>
-                                    <td className="px-4 py-2">{formatCurrency(gasto.valor)}</td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan={5} className="text-center px-4 py-2">
-                                    Nenhum registro encontrado.
+                <tbody className="">
+                    {localData && localData.length > 0 ? (
+                        localData.map((gasto: GastosVariaveis) => (
+
+                            <tr
+                                key={gasto.id}
+                                onDoubleClick={() => handleDetalhesSaida(gasto.id)}
+                                className={`border-b border-gray-200 dark:border-gray-700 ${gasto.pago ? "bg-green-100 dark:bg-green-700" : ""}`}
+                            >
+                                <td className="p-3 text-center">
+                                    <Checkbox
+                                        checked={gasto.pago}
+                                        onClick={() => handleCheckboxChange(gasto.id, gasto.pago)}
+
+                                    />
+                                </td>
+                                <td className="p-3 uppercase text-[13px]">{gasto.descricao.toLocaleUpperCase()}</td>
+                                <td className="p-3 uppercase text-[13px]">{gasto.credor_descricao.toLocaleUpperCase()}</td>
+                                <td className="p-3 uppercase text-[13px]">{gasto.tipo_pagamento.toLocaleUpperCase()}</td>
+                                <td className="p-3 uppercase text-[13px]">{formatCurrency(gasto.valor)}</td>
+                                <td className="p-3 text-[13px] pl-1 flex justify-end text-center">
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <span className="bg-transparent cursor-auto"> <Ellipsis /></span>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent className="">
+                                            <DropdownMenuItem>
+                                                <FilePenLine />
+                                                <span>Editar</span>
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                 </td>
                             </tr>
-                        )}
-                    </tbody>
-                    <tfoot>
-                        <tr className="bg-gray-100 dark:bg-gray-800">
-                            <td colSpan={4} className="text-right px-4 py-2 font-semibold">Total</td>
-                            <td className="px-4 py-2 font-semibold">{formatCurrency(totalValue)}</td>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan={6} className="text-center p-5 text-gray-500 dark:text-gray-400">Nenhum registro encontrado.</td>
                         </tr>
-                    </tfoot>
-                </table>
-            </div>
+                    )}
+                </tbody>
+             
+            </table>
 
             {modalEditSaida && (
                 <EditarSaida
@@ -128,8 +138,9 @@ const TableGastosVariaveis: React.FC<dataProps> = ({ periodo }) => {
                     idSaida={idClicked}
                 />
             )}
+        </div>
 
-        </>
+
 
 
     );
