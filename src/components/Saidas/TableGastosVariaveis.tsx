@@ -5,8 +5,9 @@ import { useUpdateStatusSaida } from "@/hooks/usePutStatusSaida";
 import { useEffect, useState } from "react";
 import EditarSaida from "./EditarSaida";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
-import { Ellipsis, FilePenLine } from "lucide-react";
+import { Ellipsis, FilePenLine, Trash2 } from "lucide-react";
 import { ScrollArea } from "../ui/scroll-area";
+import { DeleteSaida } from "./modalDelete";
 
 interface GastosVariaveis {
     id: number;
@@ -34,6 +35,7 @@ const TableGastosVariaveis: React.FC<dataProps> = ({ periodo }) => {
     const [modalEditSaida, setModalEditSaida] = useState(false);
     const [idClicked, setIdClicked] = useState(0);
     const [openDropdown, setOpenDropdown] = useState<number | null>(null);
+    const [modalDeleteSaida, setModalDeleteSaida] = useState(false);
 
     useEffect(() => {
         if (data) {
@@ -56,6 +58,14 @@ const TableGastosVariaveis: React.FC<dataProps> = ({ periodo }) => {
             console.error("Erro ao atualizar status:", error);
         }
     };
+
+
+    const handleDeleteSaida = (id: number) => {
+        setOpenDropdown(null);
+        setIdClicked(id);
+        setModalDeleteSaida(true);
+    };
+
 
     if (isLoading) return <div className="text-center py-4">Carregando...</div>;
     if (isError) return <div className="text-center py-4 text-red-500">Erro ao buscar dados.</div>;
@@ -118,6 +128,10 @@ const TableGastosVariaveis: React.FC<dataProps> = ({ periodo }) => {
                                                         <FilePenLine />
                                                         <span>Editar</span>
                                                     </DropdownMenuItem>
+                                                    <DropdownMenuItem onClick={() => handleDeleteSaida(gasto.id)}>
+                                                        <Trash2 />
+                                                        <span>Excluir</span>
+                                                    </DropdownMenuItem>
                                                 </DropdownMenuGroup>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
@@ -142,6 +156,10 @@ const TableGastosVariaveis: React.FC<dataProps> = ({ periodo }) => {
                     refetch={refetch}
                     periodo={periodo}
                 />
+            )}
+
+            {modalDeleteSaida && (
+                <DeleteSaida open={modalDeleteSaida} setOpen={() => setModalDeleteSaida(false)} idClicked={idClicked} refetch={refetch} periodo={periodo} />
             )}
 
         </div>
