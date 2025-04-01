@@ -9,25 +9,23 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useGetCredores } from "@/hooks/useGetCredores";
-import { ptBR } from "date-fns/locale";
 import "react-datepicker/dist/react-datepicker.css";
-import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import axiosInstance from "@/services/api";
-import { useToast } from "@/hooks/use-toast";
 import { tiposPagamento, categoria } from "@/constants";
 import { useGetDetalhesSaida } from "@/hooks/usegetDetalhesSaidas";
+import { toast } from "sonner";
+import { useGetTotGastosVariaveis } from "@/hooks/useGetTotSaidasVariaveis";
+import { useGetTotFixosParcelados } from "@/hooks/useGetTotSaidasParceladasFixas";
 
 interface EditSaidaProps {
     open: boolean;
     setOpen: (value: boolean) => void;
     idSaida: number;
+    refetch: () => void;
+    periodo: string;
 }
 
-const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
+const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida, refetch, periodo }) => {
     const id_usuario = localStorage.getItem('userId');
 
     const { data: credores = [] } = useGetCredores(Number(id_usuario));
@@ -35,25 +33,10 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
 
     const { data: dataSaida } = useGetDetalhesSaida(idSaida);
 
-    const { toast } = useToast()
 
-    const deleteSaida = async () => {
-        try {
-            const response = await axiosInstance.delete(`/saidas/${idSaida}`);
-            if (response.status === 200) {
-                toast({
-                    title: "Sucesso ao excluir a saída!",
-                    description: "Registro da despesa foi excluído com sucesso",
-                })
-                setOpen(false);
-            }
-        } catch (e) {
-            toast({
-                title: "Ocorreu um erro ao excluir a saída!",
-                description: "Lamentamos o imprevisto, tente novamente mais tarde.",
-            })
-        }
-    }
+    const { refetch: refetchTotVariados } = useGetTotGastosVariaveis(periodo, Number(id_usuario));
+    const { refetch: refetchTotParcelados } = useGetTotFixosParcelados(periodo, Number(id_usuario));
+
 
     const formSchema = z.object({
         descricao: z.string().min(1, { message: "Informe a descrição" }),
@@ -77,7 +60,8 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
         ),
         parcela_atual: z.number().nullable().optional(),
         tot_parcela: z.number().nullable().optional(),
-        data_vencimento: z.string().nullable(),
+        data_vencimento: z.string().nonempty("A data de vencimento é obrigatória.")
+
     });
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -103,7 +87,7 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         setLoading(true);
         const dados = {
-            id_usuario: 4,
+            id_usuario: id_usuario,
             data_vencimento: values.data_vencimento,
             pago: values.pago,
             descricao: values.descricao,
@@ -119,19 +103,15 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
         try {
             const response = await axiosInstance.put(`/saidas/${idSaida}`, dados);
             if (response.status === 200) {
-                toast({
-                    title: "Saída atualizada com sucesso!",
-                    description: "Registro da despesa foi atualizado com sucesso",
-                });
+                toast.success("Saída atualizada com sucesso!")
                 setOpen(false);
-                window.location.reload();
+                refetch();
+                refetchTotVariados();
+                refetchTotParcelados();
             }
         } catch (error) {
             console.error("Erro ao atualizar status:", error);
-            toast({
-                title: "Erro ao atualizar saída",
-                description: "Ocorreu um erro ao atualizar o registro. Tente novamente.",
-            });
+            toast.error("Erro ao atualizar saída");
         } finally {
             setLoading(false);
         }
@@ -154,7 +134,7 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
                                     <FormItem className="flex-1">
                                         <FormLabel>Descrição *</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="" {...field}
+                                            <Input className=" border-stone-700 " placeholder="" {...field}
                                                 onChange={(e) => field.onChange(e.target.value)}
                                             />
                                         </FormControl>
@@ -167,13 +147,13 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
                                 name="tipo_pagamento"
                                 render={({ field }) => (
                                     <FormItem className="flex-1">
-                                        <FormLabel>Tipo de Pagamento</FormLabel>
+                                        <FormLabel>Tipo de Pagamento *</FormLabel>
                                         <FormControl>
                                             <Select
                                                 value={field.value}
                                                 onValueChange={field.onChange}
                                             >
-                                                <SelectTrigger>
+                                                <SelectTrigger className=" border-stone-700 ">
                                                     <SelectValue placeholder="Selecione o tipo de pagamento" />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -203,7 +183,7 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
                                                 value={field.value ? String(field.value) : "Selecionar Credor"}
                                                 onValueChange={field.onChange}
                                             >
-                                                <SelectTrigger>
+                                                <SelectTrigger className=" border-stone-700 ">
                                                     <SelectValue>
                                                         {credores.find((credor: any) => Number(credor.id_credor) === field.value)?.descricao || "Selecione o credor"}
                                                     </SelectValue>
@@ -226,7 +206,7 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
                                 name="valor"
                                 render={({ field }) => (
                                     <FormItem className="flex-1">
-                                        <FormLabel>Valor</FormLabel>
+                                        <FormLabel>Valor * </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="number"
@@ -247,36 +227,14 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
                                 control={form.control}
                                 name="data_vencimento"
                                 render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel className="flex flex-col">Data de Vencimento</FormLabel>
+                                    <FormItem className="flex-1 space-y-2">
+                                        <FormLabel>Data da Movimentação/Vencimento *</FormLabel>
                                         <FormControl>
-                                            <Popover>
-                                                <PopoverTrigger asChild>
-                                                    <Button
-                                                        variant={"outline"}
-                                                        className={cn(
-                                                            "w-full sm:w-auto justify-start text-left font-normal",
-                                                            !field.value && "text-muted-foreground"
-                                                        )}
-                                                    >
-                                                        <CalendarIcon className="mr-2 h-4 w-4" />
-                                                        {field.value
-                                                            ? format(new Date(field.value), "dd/MM/yyyy", { locale: ptBR })
-                                                            : <span>Selecione uma data</span>}
-                                                    </Button>
-                                                </PopoverTrigger>
-                                                <PopoverContent className="w-auto p-0">
-                                                    <Calendar
-                                                        mode="single"
-                                                        selected={field.value ? new Date(field.value) : undefined}
-                                                        onSelect={(selectedDate) => {
-                                                            field.onChange(selectedDate ? selectedDate.toISOString() : "");
-                                                        }}
-                                                        locale={ptBR}
-                                                        initialFocus
-                                                    />
-                                                </PopoverContent>
-                                            </Popover>
+                                            <Input
+                                                type="date"
+                                                {...field}
+                                                className="p-3 border border-stone-700 rounded-lg shadow-sm focus:outline-none focus:ring-2 transition duration-300 ease-in-out dark:text-white"
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -356,20 +314,20 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
                             />
                         </div>
 
-                        <div className="flex flex-col sm:flex-row gap-4 items-center sm:items-start">
+                        <div className="flex flex-col sm:flex-row gap-4 items-center">
                             <FormField
                                 control={form.control}
                                 name="gasto_fixo"
                                 render={({ field }) => (
                                     <FormItem className="flex-1">
-                                        <FormLabel>Gasto Fixo?</FormLabel>
+                                        <FormLabel>Gasto recorrente?</FormLabel>
                                         <FormControl>
                                             <Select
                                                 {...field}
+                                                value={field.value !== undefined ? String(field.value) : ""}
                                                 onValueChange={(value) => field.onChange(value === "true")}
-                                                value={field.value ? "true" : "false"}
                                             >
-                                                <SelectTrigger>
+                                                <SelectTrigger className=" border-stone-700 ">
                                                     <SelectValue placeholder="Selecione se é Gasto Fixo" />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -383,19 +341,21 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
                                 )}
                             />
 
-
                             <FormField
                                 control={form.control}
                                 name="pago"
                                 render={({ field }) => (
                                     <FormItem className="flex-1" >
-                                        <FormControl>
-                                            <Checkbox
-                                                checked={field.value}
-                                                onCheckedChange={field.onChange}
-                                            />
-                                        </FormControl>
-                                        <FormLabel className="pl-2">Selecione se o gasto já foi pago</FormLabel>
+                                        <div className="flex items-center">
+                                            <FormControl>
+                                                <Checkbox
+                                                    checked={field.value}
+                                                    onCheckedChange={field.onChange}
+                                                />
+                                            </FormControl>
+                                            <FormLabel className="pl-2">Já foi pago?</FormLabel>
+                                        </div>
+
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -405,16 +365,10 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
 
                         <DialogFooter>
 
-                            <Button
-                                type="button"
-                                variant="destructive"
-                                onClick={deleteSaida}
-                            >
-                                Excluir
-                            </Button>
+
                             <Button
                                 type="submit"
-                                disabled={loading} 
+                                disabled={loading}
                             >
                                 {loading ? (
                                     <>
@@ -428,15 +382,16 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida }) => {
                                             <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
                                             <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
                                         </svg>
-                                        Alterando ...
+                                        Salvando Alterações ...
                                     </>
                                 ) : (
                                     <>
-                                        Alterar
+                                        Salvar
                                     </>
                                 )}
 
                             </Button>
+
                         </DialogFooter>
 
                     </form>

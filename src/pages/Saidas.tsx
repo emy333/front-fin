@@ -23,8 +23,8 @@ const Saidas = () => {
 
     const periodo = useMemo(() => `${selectedMonth}-${ano}`, [selectedMonth, ano]);
 
-    const { data: totalGastosVariaveis } = useGetTotGastosVariaveis(periodo, Number(id_usuario));
-    const { data: totalGastosFixosParc } = useGetTotFixosParcelados(periodo, Number(id_usuario));
+    const { data: totalGastosVariaveis, refetch: refetchTotVariados } = useGetTotGastosVariaveis(periodo, Number(id_usuario));
+    const { data: totalGastosFixosParc, refetch: refetchTotParcelados } = useGetTotFixosParcelados(periodo, Number(id_usuario));
 
     return (
         <MainLayout>
@@ -50,7 +50,7 @@ const Saidas = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:min-h-[70vh] max-h-[70vh] ">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 md:min-h-[70vh] max-h-[70vh] ">
                 <div className="flex flex-col h-full mb-5  ">
                     <div className="flex flex-row justify-between">
                         <h1 className="font-medium text-[18px] mb-2">Gastos Fixos e Parcelados</h1>
@@ -71,6 +71,9 @@ const Saidas = () => {
             <AdicionarSaida
                 open={openAdd}
                 setOpen={setOpenAdd}
+                refetchTotVariados={refetchTotVariados}
+                refetchTotParcelados={refetchTotParcelados}
+                periodo={periodo}
             />
         </MainLayout>
     )

@@ -7,7 +7,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { useGetCredores } from "@/hooks/useGetCredores";
 import axiosInstance from "@/services/api";
 import { useGetDetalhesCredores } from "@/hooks/credores/useGetDetalhesCredores";
 

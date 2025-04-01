@@ -12,21 +12,29 @@ import { useGetCredores } from "@/hooks/useGetCredores";
 import "react-datepicker/dist/react-datepicker.css";
 import { format, parseISO } from "date-fns"
 import axiosInstance from "@/services/api";
-import { useToast } from "@/hooks/use-toast";
 import { tiposPagamento, categoria } from "@/constants";
 import { ScrollArea } from "../ui/scroll-area";
-
+import { toast } from "sonner";
+import { useGetGatosFixosParcelados } from "@/hooks/useGetGastosFixosParcelados";
+import { useGetGatosVariaveis } from "@/hooks/useGetGastosVariaveis";
 
 interface AddSaidaProps {
     open: boolean;
     setOpen: (value: boolean) => void;
+    refetchTotVariados: () => void;
+    refetchTotParcelados: () => void;
+    periodo: string;
 }
 
-const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
+const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen, refetchTotVariados, refetchTotParcelados, periodo }) => {
 
     const id_usuario = localStorage.getItem('userId');
 
     const { data: credores = [] } = useGetCredores(Number(id_usuario));
+    const { refetch: refetchGastosFixosParcelados } = useGetGatosFixosParcelados(periodo, Number(id_usuario));
+    const { refetch: refetchGastosVariados } = useGetGatosVariaveis(periodo, Number(id_usuario));
+
+
     const [loading, setLoading] = useState(false);
 
     const formSchema = z.object({
@@ -77,7 +85,6 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
         },
     });
 
-    const { toast } = useToast()
 
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -99,25 +106,23 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
             valor: values.valor,
             gasto_fixo: values.gasto_fixo,
         }
-        console.log(data)
 
         setLoading(true);
         try {
             const response = await axiosInstance.post("/saidas", data);
             if (response.status === 201) {
-                toast({
-                    title: "Sucesso ao adicionar a saída!",
-                    description: "Registro da despesa foi adicionado com sucesso",
-                })
+                toast.success("Sucesso ao adicionar a saída!")
                 setOpen(false);
                 form.reset();
+                refetchTotVariados();
+                refetchTotParcelados();
+                refetchGastosFixosParcelados();
+                refetchGastosVariados();
+
             }
 
         } catch (e) {
-            toast({
-                title: "Ocorreu um erro ao adicionar a saída!",
-                description: "Lamentamos o imprevisto, tente novamente mais tarde.",
-            })
+            toast.error("Ocorreu um erro ao adicionar a saída!")
         } finally {
             setLoading(false);
         }
@@ -137,10 +142,10 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                                 control={form.control}
                                 name="descricao"
                                 render={({ field }) => (
-                                    <FormItem className="flex-1">
+                                    <FormItem className="flex-1"> 
                                         <FormLabel>Descrição *</FormLabel>
                                         <FormControl>
-                                            <Input className=" border-stone-700 " placeholder="" {...field} />
+                                            <Input className="border-stone-700 " placeholder="" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -245,7 +250,7 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen }) => {
                                 name="data_vencimento"
                                 render={({ field }) => (
                                     <FormItem className="flex-1 space-y-2">
-                                        <FormLabel>Data da Movimentação *</FormLabel>
+                                        <FormLabel>Data da Movimentação/Vencimento *</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="date"

@@ -70,7 +70,7 @@ const CardsCredores: React.FC = () => {
                                     </Button>
 
                                     <Button
-                                        className="w-9 h-9 flex items-center justify-center rounded-lg transition bg-red-600 text-white hover:bg-red-500 dark:bg-red-800 dark:text-white"
+                                        className="w-9 h-9 flex items-center justify-center rounded-lg transition bg-red-600 text-white hover:bg-red-500 dark:hover:bg-red-500 dark:bg-red-800 dark:text-white"
                                         onClick={() => handleClickDeletar(credor.id_credor)}
                                     >
                                         <Trash2 size={18} />

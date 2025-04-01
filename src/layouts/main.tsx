@@ -22,7 +22,7 @@ import {
   Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -56,7 +56,6 @@ const data = {
 const MainLayout = ({ children }: MainLayoutProps) => {
   const [isDark, setIsDark] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
