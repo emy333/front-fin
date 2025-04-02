@@ -159,7 +159,7 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida, refetch
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         {tiposPagamento.map((tipo) => (
-                                                            <SelectItem key={tipo.value} value={tipo.value}>
+                                                            <SelectItem key={tipo.value} value={tipo.value} className="uppercase">
                                                                 {tipo.descricao}
                                                             </SelectItem>
                                                         ))}
@@ -191,7 +191,7 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida, refetch
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         {credores.map((credor: any) => (
-                                                            <SelectItem key={String(credor.id_credor)} value={String(credor.id_credor)}>
+                                                            <SelectItem key={String(credor.id_credor)} value={String(credor.id_credor)} className="uppercase">
                                                                 {credor.descricao}
                                                             </SelectItem>
                                                         ))}
@@ -255,7 +255,7 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida, refetch
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         {categoria.map((categoria) => (
-                                                            <SelectItem key={categoria.value} value={categoria.value}>
+                                                            <SelectItem key={categoria.value} value={categoria.value} className="uppercase">
                                                                 {categoria.descricao}
                                                             </SelectItem>
                                                         ))}

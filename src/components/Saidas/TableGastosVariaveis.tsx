@@ -4,172 +4,198 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useUpdateStatusSaida } from "@/hooks/usePutStatusSaida";
 import { useEffect, useState } from "react";
 import EditarSaida from "./EditarSaida";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 import { Ellipsis, FilePenLine, Trash2 } from "lucide-react";
-import { ScrollArea } from "../ui/scroll-area";
 import { DeleteSaida } from "./modalDelete";
 
 interface GastosVariaveis {
-    id: number;
-    descricao: string;
-    credor_descricao: string;
-    pago: boolean;
-    tipo_pagamento: string;
-    categoria: string;
-    total_parcela: string;
-    parcela_atual: string;
-    data_vencimento: string;
-    valor: number;
+  id: number;
+  descricao: string;
+  credor_descricao: string;
+  pago: boolean;
+  tipo_pagamento: string;
+  categoria: string;
+  total_parcela: string;
+  parcela_atual: string;
+  data_vencimento: string;
+  valor: number;
 }
 
 interface dataProps {
-    periodo: string;
+  periodo: string;
 }
 
 const TableGastosVariaveis: React.FC<dataProps> = ({ periodo }) => {
-    const id_usuario = localStorage.getItem('userId');
+  const id_usuario = localStorage.getItem("userId");
 
-    const { data, isLoading, isError, refetch } = useGetGatosVariaveis(periodo, Number(id_usuario));
-    const [localData, setLocalData] = useState<GastosVariaveis[]>([]);
-    const updateStatus = useUpdateStatusSaida();
-    const [modalEditSaida, setModalEditSaida] = useState(false);
-    const [idClicked, setIdClicked] = useState(0);
-    const [openDropdown, setOpenDropdown] = useState<number | null>(null);
-    const [modalDeleteSaida, setModalDeleteSaida] = useState(false);
+  const { data, isLoading, isError, refetch } = useGetGatosVariaveis(
+    periodo,
+    Number(id_usuario)
+  );
+  const [localData, setLocalData] = useState<GastosVariaveis[]>([]);
+  const updateStatus = useUpdateStatusSaida();
+  const [modalEditSaida, setModalEditSaida] = useState(false);
+  const [idClicked, setIdClicked] = useState(0);
+  const [openDropdown, setOpenDropdown] = useState<number | null>(null);
+  const [modalDeleteSaida, setModalDeleteSaida] = useState(false);
 
-    useEffect(() => {
-        if (data) {
-            setLocalData(data);
-        }
-    }, [data]);
+  useEffect(() => {
+    if (data) {
+      setLocalData(data);
+    }
+  }, [data]);
 
-    const handleCheckboxChange = async (id: number, currentPago: boolean) => {
-        const updatedPago = !currentPago;
+  const handleCheckboxChange = async (id: number, currentPago: boolean) => {
+    const updatedPago = !currentPago;
 
-        try {
-            await updateStatus.mutateAsync({ id_saida: id, pago: updatedPago });
-            setLocalData((prev) =>
-                prev.map((gasto) =>
-                    gasto.id === id ? { ...gasto, pago: updatedPago } : gasto
-                )
-            );
+    try {
+      await updateStatus.mutateAsync({ id_saida: id, pago: updatedPago });
+      setLocalData((prev) =>
+        prev.map((gasto) =>
+          gasto.id === id ? { ...gasto, pago: updatedPago } : gasto
+        )
+      );
+    } catch (error) {
+      console.error("Erro ao atualizar status:", error);
+    }
+  };
 
-        } catch (error) {
-            console.error("Erro ao atualizar status:", error);
-        }
-    };
+  const handleDeleteSaida = (id: number) => {
+    setOpenDropdown(null);
+    setIdClicked(id);
+    setModalDeleteSaida(true);
+  };
 
-
-    const handleDeleteSaida = (id: number) => {
-        setOpenDropdown(null);
-        setIdClicked(id);
-        setModalDeleteSaida(true);
-    };
-
-
-    if (isLoading) return <div className="text-center py-4">Carregando...</div>;
-    if (isError) return <div className="text-center py-4 text-red-500">Erro ao buscar dados.</div>;
-
-    const handleDetalhesSaida = (id: number) => {
-        setOpenDropdown(null);
-        setIdClicked(id);
-        setModalEditSaida(true);
-    };
-
+  if (isLoading) return <div className="text-center py-4">Carregando...</div>;
+  if (isError)
     return (
-        <div className="shadow-md ">
-            <ScrollArea className="max-h-[70vh] overflow-auto ">
-                <table className="min-w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
-                    <thead>
-                        <tr className="bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
-                            <th className="p-3 text-center">Pago?</th>
-                            <th className="p-3 text-left">Descrição</th>
-                            <th className="p-3 text-left">Credor</th>
-                            <th className="p-3 text-left whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
-                                Tip. Pagamento
-                            </th>
-                            <th className="p-3 text-left">Valor</th>
-                            <th className="p-3 text-center"></th>
-                        </tr>
-                    </thead>
-
-                    <tbody className="">
-                        {localData && localData.length > 0 ? (
-                            localData.map((gasto: GastosVariaveis) => (
-
-                                <tr
-                                    key={gasto.id}
-                                    className={`border-b border-gray-200 dark:border-gray-700 ${gasto.pago ? "bg-green-100 dark:bg-green-700" : ""}`}
-                                >
-                                    <td className="p-3 text-center">
-                                        <Checkbox
-                                            checked={gasto.pago}
-                                            onClick={() => handleCheckboxChange(gasto.id, gasto.pago)}
-
-                                        />
-                                    </td>
-                                    <td className="p-3 uppercase text-[13px]">{gasto.descricao.toLocaleUpperCase()}</td>
-                                    <td className="p-3 uppercase text-[13px]">{gasto.credor_descricao.toLocaleUpperCase()}</td>
-                                    <td className="p-3 uppercase text-[13px]">{gasto.tipo_pagamento.toLocaleUpperCase()}</td>
-                                    <td className="p-3 uppercase text-[13px]">{formatCurrency(gasto.valor)}</td>
-                                    <td className="p-3 text-[13px] pl-1 flex justify-end text-center">
-                                        <DropdownMenu open={openDropdown === gasto.id} onOpenChange={(isOpen) => setOpenDropdown(isOpen ? gasto.id : null)}>
-                                            <DropdownMenuTrigger asChild>
-                                                <button
-                                                    className="bg-transparent rounded-md"
-                                                    onClick={() => setOpenDropdown(gasto.id)}
-                                                >
-                                                    <Ellipsis />
-                                                </button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent>
-                                                <DropdownMenuGroup>
-                                                    <DropdownMenuItem onClick={() => handleDetalhesSaida(gasto.id)}>
-                                                        <FilePenLine />
-                                                        <span>Editar</span>
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem onClick={() => handleDeleteSaida(gasto.id)}>
-                                                        <Trash2 />
-                                                        <span>Excluir</span>
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuGroup>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan={6} className="text-center p-3 text-gray-500 dark:text-gray-400">Nenhum registro encontrado.</td>
-                            </tr>
-                        )}
-                    </tbody>
-
-                </table>
-            </ScrollArea>
-
-            {modalEditSaida && (
-                <EditarSaida
-                    open={modalEditSaida}
-                    setOpen={() => setModalEditSaida(false)}
-                    idSaida={idClicked}
-                    refetch={refetch}
-                    periodo={periodo}
-                />
-            )}
-
-            {modalDeleteSaida && (
-                <DeleteSaida open={modalDeleteSaida} setOpen={() => setModalDeleteSaida(false)} idClicked={idClicked} refetch={refetch} periodo={periodo} />
-            )}
-
-        </div>
-
-
-
-
-
-
+      <div className="text-center py-4 text-red-500">Erro ao buscar dados.</div>
     );
+
+  const handleDetalhesSaida = (id: number) => {
+    setOpenDropdown(null);
+    setIdClicked(id);
+    setModalEditSaida(true);
+  };
+
+  return (
+    <div className="w-full overflow-x-auto">
+      <table className="w-full min-w-[100%] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+        <thead>
+          <tr className="bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
+            <th className="p-1 text-center text-[13px]">Pago?</th>
+            <th className="p-1 text-left text-[13px]">Descrição</th>
+            <th className="p-1 text-left text-[13px]">Credor</th>
+            <th className="p-1  text-[13px] text-left whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
+              Tip. Pagamento
+            </th>
+            <th className="p-1 text-[13px] text-left">Valor</th>
+            <th className="p-1  text-[13px] text-center"></th>
+          </tr>
+        </thead>
+
+        <tbody className="">
+          {localData && localData.length > 0 ? (
+            localData.map((gasto: GastosVariaveis) => (
+              <tr
+                key={gasto.id}
+                className={`border-b border-gray-200 dark:border-gray-700 ${
+                  gasto.pago ? "bg-green-100 dark:bg-green-700" : ""
+                }`}
+              >
+                <td className="p-1 text-center">
+                  <Checkbox
+                    checked={gasto.pago}
+                    onClick={() => handleCheckboxChange(gasto.id, gasto.pago)}
+                  />
+                </td>
+                <td className="p-1 uppercase text-[11px]">
+                  {gasto.descricao.toLocaleUpperCase()}
+                </td>
+                <td className="p-1 uppercase text-[11px]">
+                  {gasto.credor_descricao.toLocaleUpperCase()}
+                </td>
+                <td className="p-1 uppercase text-[11px]">
+                  {gasto.tipo_pagamento.toLocaleUpperCase()}
+                </td>
+                <td className="p-1 text-[11px] font-semibold">
+                  {formatCurrency(gasto.valor)}
+                </td>
+                <td className="p-1 text-[11px] pl-1 flex justify-end text-center">
+                  <DropdownMenu
+                    open={openDropdown === gasto.id}
+                    onOpenChange={(isOpen) =>
+                      setOpenDropdown(isOpen ? gasto.id : null)
+                    }
+                  >
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        className="bg-transparent rounded-md"
+                        onClick={() => setOpenDropdown(gasto.id)}
+                      >
+                        <Ellipsis />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuGroup>
+                        <DropdownMenuItem
+                          onClick={() => handleDetalhesSaida(gasto.id)}
+                        >
+                          <FilePenLine />
+                          <span>Editar</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleDeleteSaida(gasto.id)}
+                        >
+                          <Trash2 />
+                          <span>Excluir</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td
+                colSpan={6}
+                className="text-center p-3 text-gray-500 dark:text-gray-400"
+              >
+                Nenhum registro encontrado.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+
+      {modalEditSaida && (
+        <EditarSaida
+          open={modalEditSaida}
+          setOpen={() => setModalEditSaida(false)}
+          idSaida={idClicked}
+          refetch={refetch}
+          periodo={periodo}
+        />
+      )}
+
+      {modalDeleteSaida && (
+        <DeleteSaida
+          open={modalDeleteSaida}
+          setOpen={() => setModalDeleteSaida(false)}
+          idClicked={idClicked}
+          refetch={refetch}
+          periodo={periodo}
+        />
+      )}
+    </div>
+  );
 };
 
 export default TableGastosVariaveis;
