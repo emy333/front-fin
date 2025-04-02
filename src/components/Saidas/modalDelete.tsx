@@ -25,13 +25,13 @@ export const DeleteSaida: React.FC<Props> = ({ open, setOpen, idClicked, refetch
         try {
             const response = await axiosInstance.delete(`/saidas/${idClicked}`);
             if (response.status === 200) {
-                toast.success("Sucesso ao excluir a entrada!")
+                toast.success("Sucesso ao excluir a saída!")
                 refetch();
                 refetchTotGastosFixosParcelados();
                 refetchTotGastosVariados();
             }
         } catch (e) {
-            toast.error("Ocorreu um erro ao excluir a entrada!")
+            toast.error("Ocorreu um erro ao excluir a saída!")
         }
     };
 

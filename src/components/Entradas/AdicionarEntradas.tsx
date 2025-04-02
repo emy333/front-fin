@@ -87,7 +87,7 @@ const AdicionarEntradas: React.FC<AddEntradaProps> = ({ open, setOpen, periodo }
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogContent className="sm:max-w-[50%]">
+            <DialogContent className="sm:max-w-[50%] ">
                 <DialogHeader>
                     <h1 className="font-bold text-lg">Adicionar Entrada</h1>
                 </DialogHeader>

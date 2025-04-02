@@ -13,6 +13,8 @@ export const tiposPagamento = [
 
 
 export const categoria = [
+    { value: "POUPANCA", descricao: "Poupança" },
+    { value: "INVESTIMENTOS", descricao: "Investimentos"},
     { value: "COMIDA", descricao: "Comida" },
     { value: "MERCADO", descricao: "Mercado" },
     { value: "IFOOD", descricao: "Ifood" },
@@ -28,7 +30,7 @@ export const categoria = [
     { value: "TECNOLOGIA", descricao: "Tecnologia" },
     { value: "BELEZA", descricao: "Beleza" },
     { value: "VIAGENS", descricao: "Viagens" },
-    { value: "SERVIÇOS", descricao: "Serviços" },
+    { value: "SERVICOS", descricao: "Serviços" },
     { value: "OUTROS", descricao: "Outros" },
 
 ];
