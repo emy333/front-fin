@@ -59,7 +59,7 @@ const Saidas = () => {
                     <TableGastosFixosParcelados periodo={periodo} />
 
                 </div>
-                <div className="flex flex-col h-full mb-5 md:min-h-[70vh] max-h-[70vh]">
+                <div className="flex flex-col h-full mb-5  ">
                     <div className="flex flex-row justify-between">
                         <h1 className="font-medium text-[18px] mb-2">Gastos Variáveis</h1>
                         <span className="font-semibold">{formatCurrency(totalGastosVariaveis)}</span>
