@@ -87,6 +87,27 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
+
+            <div className="flex flex-col md:flex-row gap-6 h-full">
+                <div className="flex-1 flex flex-col ">
+                    <div className="flex flex-row justify-between">
+                        <h1 className="font-medium text-[18px] mb-2">Saidas por Categoria</h1>
+                    </div>
+                    <div className="flex-1">
+
+                    </div>
+                </div>
+
+                <div className="flex-1 flex flex-col ">
+                    <div className="flex flex-row justify-between">
+                        <h1 className="font-medium text-[18px] mb-2">Total de Saidas por mês</h1>
+                    </div>
+                    <div className="flex-1">
+
+                    </div>
+                </div>
+
+            </div>
         </MainLayout>
     )
 }

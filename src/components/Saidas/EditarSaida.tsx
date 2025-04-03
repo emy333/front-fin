@@ -80,7 +80,7 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida, refetch
             form.setValue("valor", dataSaida.valor);
             form.setValue("parcela_atual", dataSaida.parcela_atual);
             form.setValue("tot_parcela", dataSaida.total_parcela);
-            form.setValue("data_vencimento", dataSaida.data_vencimento);
+            form.setValue("data_vencimento", dataSaida.data_vencimento.split("T")[0]); 
         }
     }, [dataSaida, form]);
 
