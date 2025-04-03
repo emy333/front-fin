@@ -4,6 +4,7 @@ import { Card, CardContent } from "./ui/card";
 import { ScrollArea } from "./ui/scroll-area";
 
 interface GastosVariaveis {
+  id: number;
   descricao: string;
   credor_descricao: string;
   pago: boolean;
@@ -39,7 +40,7 @@ const GatosVariaveis: React.FC<dataProps> = ({ periodo }) => {
               <div className="space-y-4 p-3">
                 {data.map((gasto: GastosVariaveis) => (
                   <div
-                    key={gasto.descricao}
+                    key={gasto.id}
                     className={`flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 rounded-lg shadow-md min-h-20 ${
                       gasto.pago
                         ? "bg-green-600 dark:bg-green-800"

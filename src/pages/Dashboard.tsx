@@ -5,12 +5,16 @@ import CardsResumo from "@/components/CardResumo";
 
 import GatosFixosParcelados from "../components/DashGastosFixosParcelados";
 import GatosVariaveis from "../components/DashGastosVariaveis";
+import { GraficoTotSaidasCategoria } from "@/components/GraficoSaidasCategoria";
+
 import FiltroPeriodo from "@/components/FiltroPeriodo";
 
 import ResumoDividasPorCredor from "../components/ResumoDividasPorCredor";
 import { useGetTotGastosVariaveis } from "@/hooks/useGetTotSaidasVariaveis";
 import { useGetTotFixosParcelados } from "@/hooks/useGetTotSaidasParceladasFixas";
 import { formatCurrency } from "@/utils/formatCurrency";
+import { useGetTotSaidasCategoria } from "@/hooks/getTotSaidasCategoria";
+import { useGetTotSaidasAno } from "@/hooks/useGetTotSaidasAno";
 
 const Dashboard = () => {
     const id_usuario = localStorage.getItem('userId');
@@ -29,6 +33,10 @@ const Dashboard = () => {
 
     const { data: totalGastosVariaveis } = useGetTotGastosVariaveis(periodo, Number(id_usuario));
     const { data: totalGastosFixosParc } = useGetTotFixosParcelados(periodo, Number(id_usuario));
+    const { data: totalSidasCategoria } = useGetTotSaidasCategoria(periodo, Number(id_usuario));
+    const { data: totalSaidasAno } = useGetTotSaidasAno(periodo.split('-')[1], Number(id_usuario));
+
+    console.log("tot saidas", totalSaidasAno);
 
     useEffect(() => {
         if (totalGastosVariaveis !== undefined) {
@@ -38,6 +46,7 @@ const Dashboard = () => {
             setTotGastosFixosParc(totalGastosFixosParc);
         }
     }, [totalGastosVariaveis, totalGastosFixosParc]);
+
 
     return (
         <MainLayout >
@@ -93,8 +102,8 @@ const Dashboard = () => {
                     <div className="flex flex-row justify-between">
                         <h1 className="font-medium text-[18px] mb-2">Saidas por Categoria</h1>
                     </div>
-                    <div className="flex-1">
-
+                    <div className="flex justify-center items-center h-full">
+                        <GraficoTotSaidasCategoria data={totalSidasCategoria} />
                     </div>
                 </div>
 
