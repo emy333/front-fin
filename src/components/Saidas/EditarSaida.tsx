@@ -186,12 +186,12 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida, refetch
                                                 >
                                                     <SelectTrigger className=" border-stone-700 ">
                                                         <SelectValue>
-                                                            {credores.find((credor: any) => Number(credor.id_credor) === field.value)?.descricao || "Selecione o credor"}
+                                                            {credores.find((credor: any) => credor.id_credor === field.value)?.descricao || "Selecione o credor"}
                                                         </SelectValue>
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         {credores.map((credor: any) => (
-                                                            <SelectItem key={String(credor.id_credor)} value={String(credor.id_credor)} className="uppercase">
+                                                            <SelectItem key={credor.id_credor} value={credor.id_credor} className="uppercase">
                                                                 {credor.descricao}
                                                             </SelectItem>
                                                         ))}

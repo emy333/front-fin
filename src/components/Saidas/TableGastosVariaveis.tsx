@@ -106,7 +106,7 @@ const TableGastosVariaveis: React.FC<dataProps> = ({ periodo }) => {
               <tr
                 key={gasto.id}
                 className={`border-b border-gray-200 dark:border-gray-700 ${
-                  gasto.pago ? "bg-green-100 dark:bg-green-700" : ""
+                  gasto.pago ? "bg-green-200 dark:bg-green-600" : ""
                 }`}
               >
                 <td className="p-1 text-center">
