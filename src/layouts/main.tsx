@@ -24,6 +24,8 @@ import {
   Users,
 } from "lucide-react";
 
+
+
 interface MainLayoutProps {
   children: ReactNode;
 }
@@ -63,18 +65,24 @@ const MainLayout = ({ children }: MainLayoutProps) => {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton size="sm" asChild>
-                <a href="/" className="flex items-center">
-                  <span className="text-2xl font-bold tracking-wide text-gray-900 dark:text-white">
+                <a href="/" className="flex items-center px-3 py-2 mt-2">
+                  <span className="text-3xl font-bold font-lato text-gray-900 dark:text-white">
                     FinFácil
                   </span>
+          
+
                 </a>
+
               </SidebarMenuButton>
             </SidebarMenuItem>
 
             <SidebarMenuItem>
-              <div className="px-3 py-2 text-lg font-semibold text-gray-800 dark:text-white">
-                Seja Bem-vindo(a), <span className="text-purple-950">{nomeUser}</span>!
+              <div className="px-3 py-2 text-xl font-medium text-gray-800 dark:text-white">
+                Seja Bem-vindo(a), <span className="text-purple-950 dark:text-purple-600">{nomeUser}</span>!
               </div>
+             
+
+
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarHeader>
