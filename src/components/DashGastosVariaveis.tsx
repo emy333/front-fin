@@ -1,7 +1,8 @@
 import { useGetGatosVariaveis } from "@/hooks/useGetGastosVariaveis";
 import { formatCurrency } from "@/utils/formatCurrency";
-import { Card, CardContent } from "./ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { ScrollArea } from "./ui/scroll-area";
+import { useGetTotGastosVariaveis } from "@/hooks/useGetTotSaidasVariaveis";
 
 interface GastosVariaveis {
   id: number;
@@ -28,24 +29,35 @@ const GatosVariaveis: React.FC<dataProps> = ({ periodo }) => {
     Number(id_usuario)
   );
 
+  const { data: totalGastosVariaveis } = useGetTotGastosVariaveis(periodo, Number(id_usuario));
+
+
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error fetching data.</div>;
 
   return (
     <div className="rounded-lg shadow-lg">
-      <Card className="col-span-3 text-white">
-        <CardContent className="p-2 rounded-md ">
+      <Card className="col-span-3">
+        <CardHeader>
+          <div className="flex flex-col sm:flex-row justify-between items-start ">
+            <CardTitle className="text-md" >Saídas Variáveis </CardTitle>
+            <p className="text-md text-gray-800 font-bold">
+              {formatCurrency(totalGastosVariaveis)}
+            </p>
+          </div>
+
+        </CardHeader>
+        <CardContent className="p-2 rounded-md text-white">
           {data && data.length > 0 ? (
             <ScrollArea className="max-h-[60vh] overflow-auto p-2">
               <div className="space-y-4 p-3">
                 {data.map((gasto: GastosVariaveis) => (
                   <div
                     key={gasto.id}
-                    className={`flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 rounded-lg shadow-md min-h-20 ${
-                      gasto.pago
-                        ? "bg-green-600 dark:bg-green-800"
-                        : "bg-slate-500 dark:bg-slate-500"
-                    }`}
+                    className={`flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 rounded-lg shadow-md min-h-20 ${gasto.pago
+                      ? "bg-green-600 dark:bg-green-800"
+                      : "bg-slate-500 dark:bg-slate-500"
+                      }`}
                   >
                     <div className="flex flex-col space-y-1 w-full sm:w-2/3">
                       <p className="text-lg font-medium dark:text-white">

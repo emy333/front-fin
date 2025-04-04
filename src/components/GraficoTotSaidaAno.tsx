@@ -3,50 +3,47 @@ import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 interface Props {
-    data: { categoria: string; total: string }[]; 
-  }
-  
+    data: { mes: number; total: string }[];
+}
 
-export const GraficoTotSaidasCategoria: React.FC<Props> = ({ data }) => {
+export const GraficoTotSaidasAno: React.FC<Props> = ({ data }) => {
     if (!data || !Array.isArray(data)) {
-        return null; 
-      }
-      
+        return null;
+    }
+
     const formattedData = data.map(item => ({
         ...item,
         total: parseFloat(item.total) || 0,
     }));
+
     const chartConfig = {
         total: {
             label: "Total",
             color: "#9735cc",
         }
-    } satisfies ChartConfig
+    } satisfies ChartConfig;
+
+    const meses = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
 
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Saídas por Categoria</CardTitle>
+                <CardTitle>Total de Saídas Mês a Mês</CardTitle>
             </CardHeader>
             <CardContent>
-                <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full"
-                >
+                <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
                     <BarChart
                         accessibilityLayer
                         data={formattedData}
-                        margin={{
-                            left: 12,
-                            right: 12,
-
-                        }}
+                        margin={{ left: 12, right: 12 }}
                     >
                         <CartesianGrid vertical={false} />
                         <XAxis
-                            dataKey="categoria"
+                            dataKey="mes"
                             tickLine={false}
                             tickMargin={10}
                             axisLine={false}
-                            tickFormatter={(value) => value.slice(0, 5)}
+                            tickFormatter={(value: number) => meses[value - 1] || ""}
                         />
                         <ChartTooltip
                             cursor={false}
@@ -56,9 +53,6 @@ export const GraficoTotSaidasCategoria: React.FC<Props> = ({ data }) => {
                     </BarChart>
                 </ChartContainer>
             </CardContent>
-
         </Card>
-
-
     );
 };
