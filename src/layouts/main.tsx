@@ -1,6 +1,5 @@
 import { ReactNode, useEffect, useState } from "react";
-import ButtonDark from "@/components/ButtonDarkMode";
-import { Toaster } from "@/components/ui/toaster";
+import { useNavigate } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -14,6 +13,9 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
+import { Toaster } from "@/components/ui/toaster";
+import ButtonDark from "@/components/ButtonDarkMode";
 import {
   LogOut,
   LayoutDashboard,
@@ -21,50 +23,31 @@ import {
   Banknote,
   Users,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
 
 interface MainLayoutProps {
   children: ReactNode;
 }
 
-const data = {
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "/",
-      icon: <LayoutDashboard className="w-5 h-5" />,
-    },
-    {
-      title: "Entradas",
-      url: "/entradas",
-      icon: <PiggyBank className="w-5 h-5 " />,
-    },
-    {
-      title: "Saídas",
-      url: "/saidas",
-      icon: <Banknote className="w-5 h-5 " />,
-    },
-    {
-      title: "Credores",
-      url: "/credores",
-      icon: <Users className="w-5 h-5" />,
-    },
-  ],
-};
+const menuItems = [
+  { title: "Dashboard", url: "/", icon: <LayoutDashboard className="w-5 h-5" /> },
+  { title: "Entradas", url: "/entradas", icon: <PiggyBank className="w-5 h-5" /> },
+  { title: "Saídas", url: "/saidas", icon: <Banknote className="w-5 h-5" /> },
+  { title: "Credores", url: "/credores", icon: <Users className="w-5 h-5" /> },
+];
 
 const MainLayout = ({ children }: MainLayoutProps) => {
   const [isDark, setIsDark] = useState(false);
   const navigate = useNavigate();
+  const nomeUser = localStorage.getItem("userName");
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-    setIsDark(savedTheme === "dark" || (savedTheme === null && prefersDark));
+    setIsDark(savedTheme === "dark" || (!savedTheme && prefersDark));
+  }, []);
 
+  useEffect(() => {
     document.documentElement.classList.toggle("dark", isDark);
   }, [isDark]);
 
@@ -79,54 +62,59 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton size="lg" asChild>
-                <a href="/" className="flex ">
-                  <span className="text-2xl font-semibold tracking-wide text-gray-900 dark:text-white">
+              <SidebarMenuButton size="sm" asChild>
+                <a href="/" className="flex items-center">
+                  <span className="text-2xl font-bold tracking-wide text-gray-900 dark:text-white">
                     FinFácil
                   </span>
                 </a>
               </SidebarMenuButton>
             </SidebarMenuItem>
+
+            <SidebarMenuItem>
+              <div className="px-3 py-2 text-lg font-semibold text-gray-800 dark:text-white">
+                Seja Bem-vindo(a), <span className="text-purple-950">{nomeUser}</span>!
+              </div>
+            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarHeader>
+
         <SidebarContent>
           <SidebarGroup>
             <SidebarMenu>
-              {data.navMain.map((item) => {
-
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <a
-                        href={item.url}
-                        className={`flex items-center gap-2 font-medium px-3 py-2 rounded-md transition-all
-                        }`}
-                      >
-                        {item.icon}
-                        {item.title}
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
+              {menuItems.map(({ title, url, icon }) => (
+                <SidebarMenuItem key={title}>
+                  <SidebarMenuButton asChild>
+                    <a
+                      href={url}
+                      className="flex items-center gap-2 px-3 py-2 font-medium rounded-md transition-colors hover:bg-muted"
+                    >
+                      {icon}
+                      {title}
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
           </SidebarGroup>
         </SidebarContent>
+
         <SidebarRail />
       </Sidebar>
+
       <SidebarInset className="pb-16">
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b">
-          <div className="flex items-center gap-2 px-3 w-full">
-            <SidebarTrigger />
-            <div className="ml-auto">
-              <Button onClick={handleLogout} variant="outline" className="mr-2">
-                <LogOut className="w-5 h-5 mr-2" /> Sair
-              </Button>
-              <ButtonDark setIsDark={setIsDark} />
-            </div>
+        <header className="flex h-16 items-center border-b px-4">
+          <SidebarTrigger />
+          <div className="ml-auto flex items-center gap-2">
+            <Button onClick={handleLogout} variant="outline">
+              <LogOut className="w-5 h-5 mr-2" />
+              Sair
+            </Button>
+            <ButtonDark setIsDark={setIsDark} />
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4">{children}</div>
+
+        <main className="flex-1 p-4">{children}</main>
         <Toaster />
       </SidebarInset>
     </SidebarProvider>
