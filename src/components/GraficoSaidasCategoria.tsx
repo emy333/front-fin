@@ -49,12 +49,13 @@ export const GraficoTotSaidasCategoria: React.FC<Props> = ({ data }) => {
             <CardHeader>
                 <CardTitle className="text-xl">Saídas por Categoria</CardTitle>
             </CardHeader>
-            <CardContent >
-                <ChartContainer config={chartConfig} className="h-[300px] w-full">
+            <CardContent className="h-[300px] w-full">
+                <ChartContainer config={chartConfig} className="h-full w-full">
+
                     <BarChart
                         data={formattedData}
                         layout="vertical"
-                        margin={{ left: 20, right: 20 }}
+                        margin={{ left: 12, right: 12 }}
                     >
                         <CartesianGrid vertical={false} />
                         <XAxis type="number" hide />
