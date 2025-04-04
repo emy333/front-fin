@@ -38,12 +38,17 @@ const GatosVariaveis: React.FC<dataProps> = ({ periodo }) => {
   return (
     <div className="rounded-lg shadow-lg">
       <Card className="col-span-3">
-        <CardHeader>
+        <CardHeader className="h-20">
           <div className="flex flex-col sm:flex-row justify-between items-start ">
-            <CardTitle className="text-md" >Saídas Variáveis </CardTitle>
-            <p className="text-md text-gray-800 font-bold">
+            <CardTitle className="text-xl" >Saídas Variáveis </CardTitle>
+            <p className="text-lg text-gray-700 dark:text-white font-bold">
               {formatCurrency(totalGastosVariaveis)}
             </p>
+          </div>
+
+          <div className="flex gap-2">
+            <div className="flex text-center justify-center items-center gap-2 text-sm">PAGO: <div className="bg-green-600 h-5 w-5 rounded-sm"></div></div>
+            <div className="flex text-center justify-center items-center gap-2 text-sm">NÃO PAGO: <div className="bg-slate-500 h-5 w-5 rounded-sm"></div></div>
           </div>
 
         </CardHeader>

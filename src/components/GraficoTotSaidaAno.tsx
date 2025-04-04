@@ -28,7 +28,7 @@ export const GraficoTotSaidasAno: React.FC<Props> = ({ data }) => {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Total de Saídas Mês a Mês</CardTitle>
+                <CardTitle className="text-xl">Total de Saídas Mês a Mês</CardTitle>
             </CardHeader>
             <CardContent>
                 <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">

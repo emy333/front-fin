@@ -26,7 +26,7 @@ export const GraficoTotSaidasCategoria: React.FC<Props> = ({ data }) => {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Saídas por Categoria</CardTitle>
+                <CardTitle className="text-xl">Saídas por Categoria</CardTitle>
             </CardHeader>
             <CardContent>
                 <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full"

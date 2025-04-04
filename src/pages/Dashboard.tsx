@@ -57,7 +57,7 @@ const Dashboard = () => {
                 <ResumoDividasPorCredor periodo={periodo} />
             </div>
 
-            <div className="flex flex-col md:flex-row gap-6 h-full">
+            <div className="flex flex-col md:flex-row gap-6 mt-4">
                 <div className="flex-1 flex flex-col ">
 
                     <GatosFixosParcelados periodo={periodo} />
@@ -68,8 +68,8 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-6 h-full mt-4">
-                <div className="flex-1  ">
+            <div className="flex flex-col md:flex-row gap-6 mt-4">
+                <div className="flex-1 flex flex-col ">
                     <GraficoTotSaidasCategoria data={totalSidasCategoria} />
                 </div>
 
