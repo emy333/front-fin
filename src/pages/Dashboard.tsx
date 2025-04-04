@@ -48,7 +48,7 @@ const Dashboard = () => {
 
             <div>
                 <h1 className="font-bold text-[18px] mb-2">Visão Geral</h1>
-                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full mb-5">
+                <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 w-full mb-5">
                     <CardsResumo periodo={periodo} />
                 </div>
             </div>
@@ -57,7 +57,7 @@ const Dashboard = () => {
                 <ResumoDividasPorCredor periodo={periodo} />
             </div>
 
-            <div className="flex flex-col md:flex-row gap-6 mt-4">
+            <div className="flex flex-col xl:flex-row gap-6 mt-4">
                 <div className="flex-1 flex flex-col ">
 
                     <GatosFixosParcelados periodo={periodo} />
@@ -68,13 +68,13 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-6 mt-4">
+            <div className="flex flex-col xl:flex-row gap-6 mt-4">
                 <div className="flex-1 flex flex-col ">
                     <GraficoTotSaidasCategoria data={totalSidasCategoria} />
                 </div>
 
                 <div className="flex-1 flex flex-col ">
-                    <div className="flex-1">
+                    <div className="flex-1 ">
                         <GraficoTotSaidasAno data={totalSaidasAno} />
                     </div>
                 </div>

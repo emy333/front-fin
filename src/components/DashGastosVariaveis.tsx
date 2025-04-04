@@ -39,7 +39,7 @@ const GatosVariaveis: React.FC<dataProps> = ({ periodo }) => {
     <div className="rounded-lg shadow-lg">
       <Card className="col-span-3">
         <CardHeader className="h-20">
-          <div className="flex flex-col sm:flex-row justify-between items-start ">
+          <div className="flex flex-row justify-between items-start ">
             <CardTitle className="text-xl" >Saídas Variáveis </CardTitle>
             <p className="text-lg text-gray-700 dark:text-white font-bold">
               {formatCurrency(totalGastosVariaveis)}
@@ -54,7 +54,7 @@ const GatosVariaveis: React.FC<dataProps> = ({ periodo }) => {
         </CardHeader>
         <CardContent className="p-2 rounded-md text-white">
           {data && data.length > 0 ? (
-            <ScrollArea className="max-h-[60vh] overflow-auto p-2">
+            <ScrollArea className="h-[60vh] overflow-auto p-2">
               <div className="space-y-4 p-3">
                 {data.map((gasto: GastosVariaveis) => (
                   <div
@@ -89,7 +89,7 @@ const GatosVariaveis: React.FC<dataProps> = ({ periodo }) => {
               </div>
             </ScrollArea>
           ) : (
-            <div className="text-center p-4 text-sm text-gray-400">
+            <div className="text-center p-4 text-sm text-gray-400 mt-5">
               Nenhum registro encontrado.
             </div>
           )}

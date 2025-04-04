@@ -25,13 +25,26 @@ export const GraficoTotSaidasAno: React.FC<Props> = ({ data }) => {
 
     const meses = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
 
+    if (data.length === 0) {
+        return (
+            <Card className=" w-full">
+                <CardHeader>
+                    <CardTitle className="text-xl">Saídas por Categoria</CardTitle>
+                </CardHeader>
+                <CardContent className="h-[300px] w-full">
+                    <p>Nenhum dado disponível.</p>
+                </CardContent>
+            </Card>
+        )
+    }
+
     return (
-        <Card>
+        <Card className="w-full">
             <CardHeader>
                 <CardTitle className="text-xl">Total de Saídas Mês a Mês</CardTitle>
             </CardHeader>
-            <CardContent>
-                <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
+            <CardContent className="h-[300px] w-full">
+                <ChartContainer config={chartConfig} className="h-full w-full">
                     <BarChart
                         accessibilityLayer
                         data={formattedData}
@@ -54,5 +67,6 @@ export const GraficoTotSaidasAno: React.FC<Props> = ({ data }) => {
                 </ChartContainer>
             </CardContent>
         </Card>
+
     );
 };

@@ -1,64 +1,78 @@
-import { BarChart, Bar, XAxis, CartesianGrid } from "recharts";
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "./ui/chart";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
+import {
+    ChartConfig,
+    ChartContainer,
+    ChartTooltip,
+    ChartTooltipContent,
+} from "./ui/chart";
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from "./ui/card";
 
 interface Props {
-    data: { categoria: string; total: string }[]; 
-  }
-  
+    data: { categoria: string; total: string }[];
+}
 
 export const GraficoTotSaidasCategoria: React.FC<Props> = ({ data }) => {
-    if (!data || !Array.isArray(data)) {
-        return null; 
-      }
-      
-    const formattedData = data.map(item => ({
+    if (!data || !Array.isArray(data)) return null;
+
+    const formattedData = data.map((item) => ({
         ...item,
         total: parseFloat(item.total) || 0,
     }));
+
     const chartConfig = {
         total: {
             label: "Total",
             color: "#9735cc",
-        }
-    } satisfies ChartConfig
+        },
+    } satisfies ChartConfig;
+    if (data.length === 0) {
+        return (
+            <Card className="w-full">
+                <CardHeader>
+                    <CardTitle className="text-xl">Saídas por Categoria</CardTitle>
+                </CardHeader>
+                <CardContent className="h-[300px] w-full flex items-center justify-center">
+                    <p className="text-muted-foreground">Nenhum dado disponível.</p>
+                </CardContent>
+            </Card>
+        );
+    }
+
 
     return (
-        <Card>
+        <Card className="w-full">
             <CardHeader>
                 <CardTitle className="text-xl">Saídas por Categoria</CardTitle>
             </CardHeader>
-            <CardContent>
-                <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full"
-                >
+            <CardContent >
+                <ChartContainer config={chartConfig} className="h-[300px] w-full">
                     <BarChart
-                        accessibilityLayer
                         data={formattedData}
-                        margin={{
-                            left: 12,
-                            right: 12,
-
-                        }}
+                        layout="vertical"
+                        margin={{ left: 20, right: 20 }}
                     >
                         <CartesianGrid vertical={false} />
-                        <XAxis
+                        <XAxis type="number" hide />
+                        <YAxis
+                            type="category"
                             dataKey="categoria"
                             tickLine={false}
-                            tickMargin={10}
+                            tickMargin={2}
                             axisLine={false}
-                            tickFormatter={(value) => value.slice(0, 5)}
                         />
                         <ChartTooltip
                             cursor={false}
-                            content={<ChartTooltipContent indicator="dashed" />}
+                            content={<ChartTooltipContent hideLabel />}
                         />
-                        <Bar dataKey="total" fill="var(--color-total)" radius={4} />
+                        <Bar dataKey="total" fill="var(--color-total)" radius={5} />
                     </BarChart>
                 </ChartContainer>
             </CardContent>
-
         </Card>
-
-
     );
 };

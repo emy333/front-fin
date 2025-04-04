@@ -23,7 +23,7 @@ const ResumoDividasPorCredor: React.FC<dataProps> = ({ periodo }) => {
                     <h1 className="font-bold text-[18px] mb-2 no-underline">Dívidas por Credor</h1>
                 </AccordionTrigger>
                 <AccordionContent>
-                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full mb-5">
+                    <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 w-full mb-5">
                         {credores && credores.length > 0 ? (
                             credores.map((credor: any) => (
                                 <Card key={credor.id_credor}>

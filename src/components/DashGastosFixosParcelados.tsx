@@ -36,7 +36,7 @@ const GatosFixosParcelados: React.FC<dataProps> = ({ periodo }) => {
   return (
     <Card className="col-span-3">
       <CardHeader className="h-20">
-        <div className="flex flex-col sm:flex-row justify-between items-start ">
+        <div className="flex flex-row justify-between items-start ">
           <CardTitle className="text-xl" >Saídas Fixas e Parceladas </CardTitle>
           <p className="text-lg text-gray-700 dark:text-white font-bold">
             {formatCurrency(totalGastosFixosParc)}
@@ -50,7 +50,7 @@ const GatosFixosParcelados: React.FC<dataProps> = ({ periodo }) => {
       </CardHeader>
       <CardContent className="p-2 rounded-md text-white">
         {data && data.length > 0 ? (
-          <ScrollArea className="max-h-[60vh] overflow-auto p-2">
+          <ScrollArea className="h-[60vh] overflow-auto p-2">
             <div className="space-y-4 p-3">
               {data.map((gasto: GastosFixosParcelados) => (
                 <div
@@ -69,7 +69,7 @@ const GatosFixosParcelados: React.FC<dataProps> = ({ periodo }) => {
                     </div>
 
 
-                    <div className="flex flex-col sm:flex-row gap-1">
+                    <div className="flex flex-row gap-1">
                       {gasto.credor_descricao && (
                         <p className="text-sm dark:text-gray-300">
                           {gasto.credor_descricao.toUpperCase()}
@@ -81,7 +81,7 @@ const GatosFixosParcelados: React.FC<dataProps> = ({ periodo }) => {
                     </div>
                   </div>
 
-                  <div className="w-full sm:w-1/4 text-right font-semibold text-lg mt-2 sm:mt-0">
+                  <div className="w-full sm:w-1/4 text-right font-semibold text-lg  mt-0">
                     {formatCurrency(gasto.valor)}
                   </div>
                 </div>
@@ -89,7 +89,7 @@ const GatosFixosParcelados: React.FC<dataProps> = ({ periodo }) => {
             </div>
           </ScrollArea>
         ) : (
-          <div className="text-center p-4 text-sm text-gray-400">
+          <div className="text-center p-4 text-sm text-gray-400 mt-5">
             Nenhum registro encontrado.
           </div>
         )}

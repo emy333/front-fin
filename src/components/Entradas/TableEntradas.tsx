@@ -45,7 +45,6 @@ const TableEntradas: React.FC<dataProps> = ({ periodo }) => {
     useEffect(() => {
         if (data) {
             setLocalData(data);
-            console.log(localData);
         }
     }, [data]);
 
