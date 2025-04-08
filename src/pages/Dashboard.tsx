@@ -1,4 +1,4 @@
-import {useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 
 import MainLayout from "@/layouts/main";
 import CardsResumo from "@/components/CardResumo";
@@ -70,14 +70,15 @@ const Dashboard = () => {
 
             <div className="flex flex-col xl:flex-row gap-6 mt-4">
                 <div className="flex-1 flex flex-col ">
-                    <GraficoTotSaidasCategoria data={totalSidasCategoria} />
-                </div>
-
-                <div className="flex-1 flex flex-col ">
                     <div className="flex-1 ">
                         <GraficoTotSaidasAno data={totalSaidasAno} />
                     </div>
                 </div>
+                <div className="flex-1 flex flex-col ">
+                    <GraficoTotSaidasCategoria data={totalSidasCategoria} />
+                </div>
+
+
 
             </div>
         </MainLayout>

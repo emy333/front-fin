@@ -49,7 +49,7 @@ export const GraficoTotSaidasCategoria: React.FC<Props> = ({ data }) => {
             <CardHeader>
                 <CardTitle className="text-xl">Saídas por Categoria</CardTitle>
             </CardHeader>
-            <CardContent className="h-[300px] w-full">
+            <CardContent className="w-full">
                 <ChartContainer config={chartConfig} className="h-full w-full">
 
                     <BarChart
