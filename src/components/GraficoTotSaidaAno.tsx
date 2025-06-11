@@ -3,19 +3,10 @@ import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 interface Props {
-    data: { mes: number; total: string }[];
+    data?: { mes: number; total: string }[];
 }
 
 export const GraficoTotSaidasAno: React.FC<Props> = ({ data }) => {
-    if (!data || !Array.isArray(data)) {
-        return null;
-    }
-
-    const formattedData = data.map(item => ({
-        ...item,
-        total: parseFloat(item.total) || 0,
-    }));
-
     const chartConfig = {
         total: {
             label: "Total",
@@ -25,18 +16,38 @@ export const GraficoTotSaidasAno: React.FC<Props> = ({ data }) => {
 
     const meses = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
 
-    if (data.length === 0) {
+    // Se os dados ainda não chegaram, exibe um esqueleto
+    if (!data) {
         return (
-            <Card className=" w-full">
+            <Card className="w-full">
                 <CardHeader>
-                    <CardTitle className="text-xl">Saídas por Categoria</CardTitle>
+                    <CardTitle className="text-xl">Total de Saídas Mês a Mês</CardTitle>
                 </CardHeader>
                 <CardContent className="h-[300px] w-full">
-                    <p>Nenhum dado disponível.</p>
+                    <div className="h-full w-full animate-pulse bg-muted rounded-md" />
                 </CardContent>
             </Card>
-        )
+        );
     }
+
+    // Se a lista estiver vazia
+    if (data.length === 0) {
+        return (
+            <Card className="w-full">
+                <CardHeader>
+                    <CardTitle className="text-xl">Total de Saídas Mês a Mês</CardTitle>
+                </CardHeader>
+                <CardContent className="h-[300px] w-full flex items-center justify-center">
+                    <p className="text-sm text-muted-foreground">Nenhum dado disponível.</p>
+                </CardContent>
+            </Card>
+        );
+    }
+
+    const formattedData = data.map(item => ({
+        ...item,
+        total: parseFloat(item.total) || 0,
+    }));
 
     return (
         <Card className="w-full">
@@ -67,6 +78,5 @@ export const GraficoTotSaidasAno: React.FC<Props> = ({ data }) => {
                 </ChartContainer>
             </CardContent>
         </Card>
-
     );
 };

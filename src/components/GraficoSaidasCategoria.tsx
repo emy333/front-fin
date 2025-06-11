@@ -13,23 +13,32 @@ import {
 } from "./ui/card";
 
 interface Props {
-    data: { categoria: string; total: string }[];
+    data?: { categoria: string; total: string }[];
 }
 
 export const GraficoTotSaidasCategoria: React.FC<Props> = ({ data }) => {
-    if (!data || !Array.isArray(data)) return null;
-
-    const formattedData = data.map((item) => ({
-        ...item,
-        total: parseFloat(item.total) || 0,
-    }));
-
     const chartConfig = {
         total: {
             label: "Total",
             color: "#9735cc",
         },
     } satisfies ChartConfig;
+
+    // Skeleton de carregamento enquanto os dados não foram carregados
+    if (!data) {
+        return (
+            <Card className="w-full">
+                <CardHeader>
+                    <CardTitle className="text-xl">Saídas por Categoria</CardTitle>
+                </CardHeader>
+                <CardContent className="h-[300px] w-full">
+                    <div className="h-full w-full animate-pulse bg-muted rounded-md" />
+                </CardContent>
+            </Card>
+        );
+    }
+
+    // Estado de lista vazia
     if (data.length === 0) {
         return (
             <Card className="w-full">
@@ -43,6 +52,11 @@ export const GraficoTotSaidasCategoria: React.FC<Props> = ({ data }) => {
         );
     }
 
+    // Formatação dos dados
+    const formattedData = data.map((item) => ({
+        ...item,
+        total: parseFloat(item.total) || 0,
+    }));
 
     return (
         <Card className="w-full">
@@ -51,7 +65,6 @@ export const GraficoTotSaidasCategoria: React.FC<Props> = ({ data }) => {
             </CardHeader>
             <CardContent className="w-full">
                 <ChartContainer config={chartConfig} className="h-full w-full">
-
                     <BarChart
                         data={formattedData}
                         layout="vertical"

@@ -52,7 +52,7 @@ const CardsCredores: React.FC = () => {
                         >
                             <div className="flex items-center justify-between">
                                 <CardTitle
-                                    className="uppercase text-lg font-semibold text-gray-800 dark:text-white break-words whitespace-normal block"
+                                    className="uppercase text-md font-bold font-notoGondi text-purple  break-words whitespace-normal block"
                                     title={credor.descricao}
                                 >
                                     {credor.descricao.length > 15
@@ -61,16 +61,17 @@ const CardsCredores: React.FC = () => {
                                 </CardTitle>
 
                                 <div className="flex gap-2">
+
+
                                     <Button
-                                        className="w-9 h-9 flex items-center justify-center rounded-lg transition border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
-                                        variant="secondary"
+                                        className="w-9 h-9 flex items-center justify-center rounded-lg  "
                                         onClick={() => handleClickEditar(credor.id_credor)}
                                     >
                                         <Pencil size={18} />
                                     </Button>
 
                                     <Button
-                                        className="w-9 h-9 flex items-center justify-center rounded-lg transition bg-red-600 text-white hover:bg-red-500 dark:hover:bg-red-500 dark:bg-red-800 dark:text-white"
+                                        className="w-9 h-9 flex items-center justify-center rounded-lg transition bg-red-800 text-white hover:bg-red-800 hover:dark:bg-red-500 dark:bg-red-600 dark:text-white"
                                         onClick={() => handleClickDeletar(credor.id_credor)}
                                     >
                                         <Trash2 size={18} />

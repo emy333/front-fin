@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Dialog, DialogContent, DialogFooter, DialogHeader } from "@/components/ui/dialog";
+import { DialogFooter, DialogHeader } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -7,7 +7,6 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useGetCredores } from "@/hooks/useGetCredores";
 import "react-datepicker/dist/react-datepicker.css";
 import { format, parseISO } from "date-fns"
@@ -17,6 +16,7 @@ import { ScrollArea } from "../ui/scroll-area";
 import { toast } from "sonner";
 import { useGetGatosFixosParcelados } from "@/hooks/useGetGastosFixosParcelados";
 import { useGetGatosVariaveis } from "@/hooks/useGetGastosVariaveis";
+import { Sheet, SheetContent } from "../ui/sheet";
 
 interface AddSaidaProps {
     open: boolean;
@@ -41,7 +41,7 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen, refetchTotVari
         descricao: z.string().min(1, { message: "Informe a descrição" }),
         tipo_pagamento: z.string().min(1, { message: "Selecione um tipo de pagamento" }),
         categoria: z.string().optional(),
-        credores: z.string().optional(),
+        credores: z.string().nullable().optional(),
         pago: z.boolean(),
         gasto_fixo: z.boolean(),
         valor: z.preprocess(
@@ -93,6 +93,7 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen, refetchTotVari
             values.data_vencimento = format(dataISO, "yyyy-MM-dd");
         }
 
+
         const data = {
             id_usuario: String(id_usuario),
             data_vencimento: values.data_vencimento,
@@ -130,16 +131,16 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen, refetchTotVari
     }
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogContent className="sm:max-w-[50%]">
+        <Sheet open={open} onOpenChange={setOpen}>
+            <SheetContent className="w-full sm:min-w-[40%] max-w-screen-sm max-h-screen ">
                 <DialogHeader>
-                    <h1 className="font-bold text-lg">Adicionar Saída</h1>
+                    <h1 className="text-xl font-bold">Adicionar Saída</h1>
                 </DialogHeader>
-                <ScrollArea className="max-h-[70vh] p-2">
 
+                <ScrollArea className="h-[90vh] w-full rounded-md  p-3 mt-2 mb-2">
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 ">
-                            <div className="flex flex-col md:flex-col xl:flex-row gap-4">
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 p-1">
+                            <div className="flex flex-col xl:flex-row gap-4">
                                 <FormField
                                     control={form.control}
                                     name="descricao"
@@ -147,12 +148,13 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen, refetchTotVari
                                         <FormItem className="flex-1">
                                             <FormLabel>Descrição *</FormLabel>
                                             <FormControl>
-                                                <Input className="border-stone-700 " placeholder="" {...field} />
+                                                <Input className="border-stone-700" placeholder="Digite a descrição" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
+
                                 <FormField
                                     control={form.control}
                                     name="tipo_pagamento"
@@ -160,15 +162,12 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen, refetchTotVari
                                         <FormItem className="flex-1">
                                             <FormLabel>Tipo de Pagamento *</FormLabel>
                                             <FormControl>
-                                                <Select
-                                                    value={field.value}
-                                                    onValueChange={field.onChange}
-                                                >
-                                                    <SelectTrigger className=" border-stone-700 ">
-                                                        <SelectValue placeholder="Selecione o tipo de pagamento" />
+                                                <Select value={field.value} onValueChange={field.onChange}>
+                                                    <SelectTrigger className="border-stone-700">
+                                                        <SelectValue placeholder="Selecione o tipo" />
                                                     </SelectTrigger>
                                                     <SelectContent>
-                                                        <ScrollArea className="h-[20vh] p-2">
+                                                        <ScrollArea className="h-[20vh]">
                                                             {tiposPagamento.map((tipo) => (
                                                                 <SelectItem key={tipo.value} value={tipo.value} className="uppercase">
                                                                     {tipo.descricao}
@@ -184,7 +183,8 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen, refetchTotVari
                                 />
                             </div>
 
-                            <div className="flex flex-col md:flex-col xl:flex-row gap-4">
+                            {/* Credor e Valor */}
+                            <div className="flex flex-col xl:flex-row gap-4">
                                 <FormField
                                     control={form.control}
                                     name="credores"
@@ -193,37 +193,37 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen, refetchTotVari
                                             <FormLabel>Credor</FormLabel>
                                             <FormControl>
                                                 <Select
-                                                    value={field.value ? String(field.value) : "Selecionar Credor"}
-                                                    onValueChange={field.onChange}
+                                                    value={field.value ? String(field.value) : ""}
+                                                    onValueChange={(value) => field.onChange(value === "null" ? null : value)}
                                                 >
-                                                    <SelectTrigger className=" border-stone-700 ">
-                                                        <SelectValue>
-                                                            {credores.find((credor: any) => String(credor.id_credor) === field.value)?.descricao || "Selecione o credor"}
-                                                        </SelectValue>
+                                                    <SelectTrigger className="border-stone-700">
+                                                        <SelectValue placeholder="Selecionar credor" />
                                                     </SelectTrigger>
                                                     <SelectContent>
-                                                        <ScrollArea className="h-20 p-2">                                                            {credores.length > 0 ? (
-                                                            credores.map((credor: any) => (
-                                                                <SelectItem
-                                                                    key={String(credor.id_credor)}
-                                                                    value={String(credor.id_credor)}
-                                                                    className="uppercase"
-                                                                >
-                                                                    {credor.descricao}
-                                                                </SelectItem>
-                                                            ))
-                                                        ) : (
-                                                            <p className="text-center">Nenhum credor encontrado</p>
-                                                        )}
+                                                        <ScrollArea className="h-28">
+                                                            <SelectItem key="null" value="null">Limpar seleção</SelectItem>
+                                                            {credores.length > 0 ? (
+                                                                credores.map((credor: any) => (
+                                                                    <SelectItem
+                                                                        key={String(credor.id_credor)}
+                                                                        value={String(credor.id_credor)}
+                                                                        className="uppercase"
+                                                                    >
+                                                                        {credor.descricao}
+                                                                    </SelectItem>
+                                                                ))
+                                                            ) : (
+                                                                <p className="text-center">Nenhum credor encontrado</p>
+                                                            )}
                                                         </ScrollArea>
                                                     </SelectContent>
-
                                                 </Select>
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
+
                                 <FormField
                                     control={form.control}
                                     name="valor"
@@ -232,7 +232,7 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen, refetchTotVari
                                             <FormLabel>Valor Total *</FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    className=" border-stone-700 "
+                                                    className="border-stone-700"
                                                     type="number"
                                                     placeholder="Informe o valor"
                                                     {...field}
@@ -242,21 +242,21 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen, refetchTotVari
                                         </FormItem>
                                     )}
                                 />
-
                             </div>
 
-                            <div className="flex flex-col md:flex-col xl:flex-row gap-4">
+                            {/* Data e Categoria */}
+                            <div className="flex flex-col xl:flex-row gap-4">
                                 <FormField
                                     control={form.control}
                                     name="data_vencimento"
                                     render={({ field }) => (
-                                        <FormItem className="flex-1 space-y-2">
-                                            <FormLabel>Data da Movimentação/Vencimento *</FormLabel>
+                                        <FormItem className="flex-1">
+                                            <FormLabel>Data da Mov/Vencimento *</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type="date"
                                                     {...field}
-                                                    className="p-3 border border-stone-700 rounded-lg shadow-sm focus:outline-none focus:ring-2 transition duration-300 ease-in-out dark:text-white"
+                                                    className="border-stone-700 p-3 rounded-lg shadow-sm"
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -268,18 +268,18 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen, refetchTotVari
                                     control={form.control}
                                     name="categoria"
                                     render={({ field }) => (
-                                        <FormItem className="flex-1 space-y-2">
+                                        <FormItem className="flex-1">
                                             <FormLabel>Categoria</FormLabel>
                                             <FormControl>
                                                 <Select value={field.value} onValueChange={field.onChange}>
-                                                    <SelectTrigger className="p-3 border border-stone-700">
+                                                    <SelectTrigger className="border-stone-700 p-3">
                                                         <SelectValue placeholder="Selecione a Categoria" />
                                                     </SelectTrigger>
                                                     <SelectContent>
-                                                        <ScrollArea className="h-[20vh] p-2">
-                                                            {categoria.map((categoria) => (
-                                                                <SelectItem className="uppercase" key={categoria.value} value={categoria.value}>
-                                                                    {categoria.descricao}
+                                                        <ScrollArea className="h-[20vh]">
+                                                            {categoria.map((cat) => (
+                                                                <SelectItem key={cat.value} value={cat.value} className="uppercase">
+                                                                    {cat.descricao}
                                                                 </SelectItem>
                                                             ))}
                                                         </ScrollArea>
@@ -292,7 +292,8 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen, refetchTotVari
                                 />
                             </div>
 
-                            <div className="flex flex-col md:flex-col xl:flex-row gap-4">
+                            {/* Parcelas */}
+                            <div className="flex flex-col xl:flex-row gap-4">
                                 <FormField
                                     control={form.control}
                                     name="parcela_atual"
@@ -301,13 +302,12 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen, refetchTotVari
                                             <FormLabel>Parcela Atual</FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    className=" border-stone-700 "
+                                                    className="border-stone-700"
                                                     type="number"
                                                     value={field.value ?? ''}
-                                                    onChange={(e) => {
-                                                        const parsedValue = parseInt(e.target.value, 10);
-                                                        field.onChange(isNaN(parsedValue) ? undefined : parsedValue);
-                                                    }}
+                                                    onChange={(e) =>
+                                                        field.onChange(isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value))
+                                                    }
                                                     onBlur={field.onBlur}
                                                 />
                                             </FormControl>
@@ -320,16 +320,15 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen, refetchTotVari
                                     name="tot_parcela"
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
-                                            <FormLabel>Total de Parcela</FormLabel>
+                                            <FormLabel>Total de Parcelas</FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    className=" border-stone-700 "
+                                                    className="border-stone-700"
                                                     type="number"
                                                     value={field.value ?? ''}
-                                                    onChange={(e) => {
-                                                        const parsedValue = parseInt(e.target.value, 10);
-                                                        field.onChange(isNaN(parsedValue) ? undefined : parsedValue);
-                                                    }}
+                                                    onChange={(e) =>
+                                                        field.onChange(isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value))
+                                                    }
                                                     onBlur={field.onBlur}
                                                 />
                                             </FormControl>
@@ -339,7 +338,8 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen, refetchTotVari
                                 />
                             </div>
 
-                            <div className="flex flex-col md:flex-col xl:flex-row gap-4">
+                            {/* Gasto fixo e Pago */}
+                            <div className="flex flex-col xl:flex-row gap-4">
                                 <FormField
                                     control={form.control}
                                     name="gasto_fixo"
@@ -348,12 +348,11 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen, refetchTotVari
                                             <FormLabel>Gasto recorrente?</FormLabel>
                                             <FormControl>
                                                 <Select
-                                                    {...field}
                                                     value={field.value !== undefined ? String(field.value) : ""}
                                                     onValueChange={(value) => field.onChange(value === "true")}
                                                 >
-                                                    <SelectTrigger className="w-full border-stone-700">
-                                                        <SelectValue placeholder="Selecione se é Gasto Fixo" />
+                                                    <SelectTrigger className="border-stone-700">
+                                                        <SelectValue placeholder="Selecione" />
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         <SelectItem value="true">Sim</SelectItem>
@@ -370,55 +369,47 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen, refetchTotVari
                                     control={form.control}
                                     name="pago"
                                     render={({ field }) => (
-                                        <FormItem className="flex-1" >
-                                            <div className="flex items-center">
-                                                <FormControl>
-                                                    <Checkbox
-                                                        checked={field.value}
-                                                        onCheckedChange={field.onChange}
-                                                    />
-                                                </FormControl>
-                                                <FormLabel className="pl-2">Já foi pago?</FormLabel>
-                                            </div>
-
+                                        <FormItem className="flex-1">
+                                            <FormLabel>Já foi pago?</FormLabel>
+                                            <FormControl>
+                                                <Select
+                                                    value={field.value !== undefined ? String(field.value) : ""}
+                                                    onValueChange={(value) => field.onChange(value === "true")}
+                                                >
+                                                    <SelectTrigger className="border-stone-700">
+                                                        <SelectValue placeholder="Selecione" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="true">Sim</SelectItem>
+                                                        <SelectItem value="false">Não</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
                             </div>
 
+                            {/* Botão de envio */}
                             <DialogFooter>
-                                <Button
-                                    type="submit"
-                                    disabled={loading}
-                                >
+                                <Button type="submit" disabled={loading} className="w-full mt-4">
                                     {loading ? (
-                                        <>
-                                            <svg
-                                                aria-hidden="true"
-                                                className="w-5 h-5 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
-                                                viewBox="0 0 100 101"
-                                                fill="none"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                            >
-                                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
-                                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
-                                            </svg>
-                                            Salvando ...
-                                        </>
+                                        <div className="flex items-center justify-center gap-2">
+                                            <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-blue-600" />
+                                            Processando...
+                                        </div>
                                     ) : (
-                                        <>
-                                            Salvar
-                                        </>
+                                        "Salvar Saída"
                                     )}
-
                                 </Button>
                             </DialogFooter>
                         </form>
                     </Form>
                 </ScrollArea>
-            </DialogContent>
-        </Dialog>
+            </SheetContent>
+        </Sheet>
+
 
     );
 };

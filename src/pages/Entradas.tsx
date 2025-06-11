@@ -1,10 +1,10 @@
 import MainLayout from "@/layouts/main";
-import { MdAddCard } from "react-icons/md";
 import { Button } from "@/components/ui/button";
 import FiltroPeriodo from "@/components/FiltroPeriodo";
 import { useState, useMemo } from "react";
 import TableEntradas from "@/components/Entradas/TableEntradas";
 import AdicionarEntradas from "@/components/Entradas/AdicionarEntradas";
+import { Plus } from "lucide-react";
 
 const Entradas = () => {
     const [openAdd, setOpenAdd] = useState(false);
@@ -26,10 +26,10 @@ const Entradas = () => {
                 </div>
                 <div className="flex flex-row gap-2 text-center items-center">
                     <Button
-                        variant="secondary"
+                        variant="default"
                         onClick={() => setOpenAdd(true)}
-                        className="flex flex-row gap-5 p-4 font-medium">
-                        <MdAddCard />
+                        className="flex flex-row gap-2 p-4 font-medium ">
+                        <Plus size={20}/>
                         <span className="hidden lg:inline">Adicionar Entrada</span>
                     </Button>
                     <FiltroPeriodo

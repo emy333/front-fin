@@ -9,7 +9,7 @@ interface Props {
           <svg
             aria-hidden="true"
             style={{ width: `${w}px`, height: `${h}px` }}
-            className="text-gray-200 animate-spin fill-blue-600"
+            className="text-gray-200 animate-spin fill-purple"
             viewBox="0 0 100 101"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"

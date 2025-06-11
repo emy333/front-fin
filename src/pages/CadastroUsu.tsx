@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { Moon, Sun, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import axiosInstance from "@/services/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -20,14 +20,9 @@ const registerSchema = z.object({
 
 export function Cadastro({ className, ...props }: React.ComponentProps<"div">) {
   const navigate = useNavigate();
-  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("darkMode") === "true");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode);
-    localStorage.setItem("darkMode", darkMode.toString());
-  }, [darkMode]);
 
   const {
     register,
@@ -59,14 +54,7 @@ export function Cadastro({ className, ...props }: React.ComponentProps<"div">) {
 
   return (
     <div className={cn("flex flex-col gap-6 min-h-screen justify-center items-center p-4", className)} {...props}>
-      <Button
-        onClick={() => setDarkMode(!darkMode)}
-        className="absolute top-4 right-4"
-        variant="outline"
-      >
-        {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-      </Button>
-      
+
       <Card className="overflow-hidden w-full max-w-lg md:max-w-4xl shadow-lg">
         <CardContent className="grid p-0 md:grid-cols-2 h-full">
           {/* Formulário */}

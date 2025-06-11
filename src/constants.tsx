@@ -7,7 +7,7 @@ export const tiposPagamento = [
     { value: "DINHEIRO", descricao: "Dinheiro" },
     { value: "TRANSFERÊNCIA", descricao: "Transferência bancária" },
     { value: "CHEQUE", descricao: "Cheque" },
-    { value: "VALE", descricao: "Vale alimentação/vale refeição" },
+    { value: "VALE", descricao: "Vale alimentação/refeição" },
     { value: "OUTROS", descricao: "Outros" }
 ];
 

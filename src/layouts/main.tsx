@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -7,7 +7,6 @@ import {
   SidebarHeader,
   SidebarInset,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
   SidebarRail,
@@ -19,27 +18,26 @@ import ButtonDark from "@/components/ButtonDarkMode";
 import {
   LogOut,
   LayoutDashboard,
-  PiggyBank,
   Banknote,
   Users,
+  TrendingUp,
 } from "lucide-react";
-
-
 
 interface MainLayoutProps {
   children: ReactNode;
 }
 
 const menuItems = [
-  { title: "Dashboard", url: "/", icon: <LayoutDashboard className="w-5 h-5" /> },
-  { title: "Entradas", url: "/entradas", icon: <PiggyBank className="w-5 h-5" /> },
-  { title: "Saídas", url: "/saidas", icon: <Banknote className="w-5 h-5" /> },
-  { title: "Credores", url: "/credores", icon: <Users className="w-5 h-5" /> },
+  { title: "Dashboard", url: "/", icon: <LayoutDashboard size={18} /> },
+  { title: "Entradas", url: "/entradas", icon: <TrendingUp size={18} /> },
+  { title: "Saídas", url: "/saidas", icon: <Banknote size={18} /> },
+  { title: "Credores", url: "/credores", icon: <Users size={18} /> },
 ];
 
 const MainLayout = ({ children }: MainLayoutProps) => {
   const [isDark, setIsDark] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const nomeUser = localStorage.getItem("userName");
 
   useEffect(() => {
@@ -63,46 +61,45 @@ const MainLayout = ({ children }: MainLayoutProps) => {
       <Sidebar>
         <SidebarHeader>
           <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton size="sm" asChild>
-                <a href="/" className="flex items-center px-3 py-2 mt-2">
-                  <span className="text-3xl font-bold font-lato text-gray-900 dark:text-white">
-                    FinFácil
-                  </span>
-          
 
-                </a>
-
-              </SidebarMenuButton>
-            </SidebarMenuItem>
 
             <SidebarMenuItem>
-              <div className="px-3 py-2 text-xl font-medium text-gray-800 dark:text-white">
-                Seja Bem-vindo(a), <span className="text-purple-950 dark:text-purple-600">{nomeUser}</span>!
+              <a href="/" className="flex items-center px-1">
+                <span className="text-xl font-bold font-notoGondi text-purple">
+                  FinFácil
+                </span>
+              </a>
+              <div className="px-1 text-xm font-medium text-foreground ">
+                Seja Bem-vindo(a),{" "}
+                <p >{nomeUser}!</p>
               </div>
-             
-
-
             </SidebarMenuItem>
           </SidebarMenu>
+          <hr className="mb-2" />
         </SidebarHeader>
 
         <SidebarContent>
           <SidebarGroup>
             <SidebarMenu>
-              {menuItems.map(({ title, url, icon }) => (
-                <SidebarMenuItem key={title}>
-                  <SidebarMenuButton asChild>
+              {menuItems.map(({ title, url, icon }) => {
+                const isActive =
+                  location.pathname === url ||
+                  (url !== "/" && location.pathname.startsWith(url));
+
+                return (
+                  <SidebarMenuItem key={title}>
                     <a
                       href={url}
-                      className="flex items-center gap-2 px-3 py-2 font-medium rounded-md transition-colors hover:bg-muted"
+                      className={`flex items-center gap-2 px-2 py-2 font-medium rounded-md ${isActive ? "bg-purple text-background" : ""
+                        }`}
+
                     >
                       {icon}
                       {title}
                     </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroup>
         </SidebarContent>

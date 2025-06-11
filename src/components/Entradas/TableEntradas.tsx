@@ -57,35 +57,34 @@ const TableEntradas: React.FC<dataProps> = ({ periodo }) => {
 
     return (
         <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ">
+            <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ">
                 {localData.length > 0 ? (
                     localData.map((entradas: EntradasProps) => (
                         <Card
                             key={entradas.id}
-                            className=" p-3 shadow-lg rounded-xl cursor-pointer hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700"
+                            className=" p-4 shadow-lg rounded-lg cursor-pointer hover:shadow-xl transition-all duration-300 border "
                         >
                             <div className="flex flex-col">
-                                <CardTitle className="uppercase">
+                                <CardTitle className="uppercase font-semibold font-serifs" >
                                     {entradas.descricao}
                                 </CardTitle>
 
-                                <CardDescription className=" mt-1 text-gray-600 dark:text-gray-300 flex items-center justify-between">
-                                    <span className="text-lg ">
+                                <CardDescription className=" mt-1 text-xl font-bold flex items-center justify-between">
+                                    <span className="text-purple font-bold text-xl">
                                         {formatCurrency(entradas.valor)}
                                     </span>
                                 </CardDescription>
 
                                 <div className="flex justify-end gap-1 mt-1">
                                     <Button
-                                        className="w-9 h-9 flex items-center justify-center rounded-lg transition border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
-                                        variant={"secondary"}
+                                        className="w-9 h-9 flex items-center justify-center rounded-lg  "
                                         onClick={() => handleClickEditar(entradas.id)}
                                     >
                                         <Pencil size={18} />
                                     </Button>
 
                                     <Button
-                                        className="w-9 h-9 flex items-center justify-center rounded-lg transition bg-red-700 text-white hover:bg-red-500 hover:dark:bg-red-500 dark:bg-red-900 dark:text-white"
+                                        className="w-9 h-9 flex items-center justify-center rounded-lg transition bg-red-800 text-white hover:bg-red-800 hover:dark:bg-red-500 dark:bg-red-600 dark:text-white"
                                         onClick={() => handleClickDeletar(entradas.id)}
                                     >
                                         <Trash2 size={18} />
