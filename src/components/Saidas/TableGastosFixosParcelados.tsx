@@ -55,7 +55,7 @@ const CardGasto: React.FC<{
   <div
     className={`bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-4
       border ${gasto.pago
-        ? "border-green-500 bg-green-100 dark:bg-green-600 dark:border-none"
+        ? " bg-green-300 dark:bg-green-600 dark:border-none"
         : ""
       }
       transition-colors duration-300 ease-in-out

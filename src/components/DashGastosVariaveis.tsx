@@ -77,10 +77,10 @@ const GastosVariaveis: React.FC<dataProps> = ({ periodo }) => {
           <ScrollArea className="h-[60vh] overflow-auto p-2">
             <div className="space-y-4 p-3">
               {data.map((gasto: GastosVariaveis) => (
-                <div
+                           <div
                   key={gasto.id}
                   className={`flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 rounded-lg shadow-md min-h-20 ${
-                    gasto.pago ? "bg-green-800 dark:bg-green-600" : "bg-slate-800 dark:bg-slate-600"
+                    gasto.pago ? "text-white bg-green-800 dark:bg-green-600 " : "text-white bg-slate-700 dark:bg-slate-600"
                   }`}
                 >
                   <div className="flex flex-col space-y-1 w-full sm:w-2/3">
