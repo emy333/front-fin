@@ -74,7 +74,7 @@ const EditarSaida: React.FC<EditSaidaProps> = ({ open, setOpen, idSaida, refetch
             form.setValue("descricao", dataSaida.descricao);
             form.setValue("tipo_pagamento", dataSaida.tipo_pagamento);
             form.setValue("categoria", dataSaida.categoria);
-            form.setValue("credores", dataSaida.id_credor);
+            form.setValue("credores", dataSaida.id_credor !== null ? String(dataSaida.id_credor) : null);
             form.setValue("pago", dataSaida.pago);
             form.setValue("gasto_fixo", dataSaida.gasto_fixo);
             form.setValue("valor", dataSaida.valor);
