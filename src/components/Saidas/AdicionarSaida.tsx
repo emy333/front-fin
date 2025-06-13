@@ -132,12 +132,12 @@ const AdicionarSaida: React.FC<AddSaidaProps> = ({ open, setOpen, refetchTotVari
 
     return (
         <Sheet open={open} onOpenChange={setOpen}>
-            <SheetContent className="w-full sm:min-w-[40%] max-w-screen-sm max-h-screen ">
+            <SheetContent className="w-full sm:min-w-[40%] max-w-screen-sm max-h-screen flex flex-col">
                 <DialogHeader>
                     <h1 className="text-xl font-bold">Adicionar Saída</h1>
                 </DialogHeader>
 
-                <ScrollArea className="h-[90vh] w-full rounded-md  p-3 mt-2 mb-2">
+                <ScrollArea className="flex-1 overflow-y-auto w-full rounded-md p-3 mt-2 mb-2">
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 p-1">
                             <div className="flex flex-col xl:flex-row gap-4">
