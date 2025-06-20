@@ -110,6 +110,7 @@ export function Login({ className, ...props }: React.ComponentProps<"div">) {
                                     </button>
                                 </div>
                                 {errors.password?.message && <p className="text-red-500 text-sm">{String(errors.password.message)}</p>}
+                                <div className="text-sm">Esqueceu a senha? <a href="/redefinir-senha" className="font-semibold text-blue-600 hover:underline">Clique aqui</a></div>
                             </div>
                             {loginError && <p className="text-red-500 text-sm">{loginError}</p>}
 

@@ -6,6 +6,7 @@ import Entradas from './pages/Entradas';
 import Credores from './pages/Credores';
 import { Login } from './pages/Login';
 import { Cadastro } from './pages/CadastroUsu';
+import RedefinirSenha from './pages/RedefinirSenha';
 
 const isValidToken = (token: string) => {
   try {
@@ -33,6 +34,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/auth" element={<Login />} />
+        <Route path="/redefinir-senha" element={<RedefinirSenha />} />
         <Route path="/cadastro" element={<Cadastro />} />
         <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
         <Route path="/saidas" element={<PrivateRoute><Saidas /></PrivateRoute>} />
