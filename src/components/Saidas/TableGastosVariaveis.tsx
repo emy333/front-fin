@@ -1,17 +1,9 @@
-
 import { useGetGatosVariaveis } from "@/hooks/useGetGastosVariaveis";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useUpdateStatusSaida } from "@/hooks/usePutStatusSaida";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import EditarSaida from "./EditarSaida";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
 import { Ellipsis, FilePenLine, Trash2 } from "lucide-react";
 import { DeleteSaida } from "./modalDelete";
 
@@ -47,6 +39,67 @@ function useIsMobile(breakpoint = 768) {
   return isMobile;
 }
 
+const SimpleDropdown: React.FC<{
+  onEdit: () => void;
+  onDelete: () => void;
+}> = ({ onEdit, onDelete }) => {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
+    if (open) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [open]);
+
+  return (
+    <div className="relative inline-block text-left" ref={ref}>
+      <button
+        className="p-1 text-gray-700 dark:text-gray-100 transition"
+        aria-label="Mais opções"
+        onClick={() => setOpen(!open)}
+      >
+        <Ellipsis size={20} />
+      </button>
+
+      {open && (
+        <div className="absolute right-0 mt-2 w-36 bg-white dark:bg-primary-foreground rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+          <div className="py-1">
+            <button
+              onClick={() => {
+                onEdit();
+                setOpen(false);
+              }}
+              className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              <FilePenLine size={16} />
+              Editar
+            </button>
+            <button
+              onClick={() => {
+                onDelete();
+                setOpen(false);
+              }}
+              className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:text-red-800 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              <Trash2 size={16} />
+              Excluir
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const CardGasto: React.FC<{
   gasto: GastosVariaveis;
   onCheckboxChange: () => void;
@@ -67,32 +120,7 @@ const CardGasto: React.FC<{
       <h3 className="flex-1 ml-3 font-semibold text-gray-800 dark:text-gray-200 uppercase text-lg truncate">
         {gasto.descricao}
       </h3>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button
-            className="p-1 text-gray-700  dark:text-gray-100 transition"
-            aria-label="Mais opções"
-          >
-            <Ellipsis size={20} />
-          </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent side="bottom" align="end" className="w-36">
-          <DropdownMenuGroup>
-            <DropdownMenuItem
-              onClick={onEdit}
-              className="flex items-center gap-2 text-sm"
-            >
-              <FilePenLine size={16} /> Editar
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={onDelete}
-              className="flex items-center gap-2 text-sm text-red-600 hover:text-red-800"
-            >
-              <Trash2 size={16} /> Excluir
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <SimpleDropdown onEdit={onEdit} onDelete={onDelete} />
     </div>
     <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm text-gray-600 dark:text-gray-50">
       <div>
@@ -115,7 +143,6 @@ const CardGasto: React.FC<{
   </div>
 );
 
-
 const TableGastosVariaveis: React.FC<DataProps> = ({
   periodo,
   filtroCredor = "",
@@ -130,7 +157,6 @@ const TableGastosVariaveis: React.FC<DataProps> = ({
   const [modalEditSaida, setModalEditSaida] = useState(false);
   const [modalDeleteSaida, setModalDeleteSaida] = useState(false);
   const [idClicked, setIdClicked] = useState(0);
-  const [openDropdown, setOpenDropdown] = useState<number | null>(null);
 
   const isMobile = useIsMobile();
 
@@ -152,13 +178,11 @@ const TableGastosVariaveis: React.FC<DataProps> = ({
   };
 
   const handleDetalhesSaida = (id: number) => {
-    setOpenDropdown(null);
     setIdClicked(id);
     setModalEditSaida(true);
   };
 
   const handleDeleteSaida = (id: number) => {
-    setOpenDropdown(null);
     setIdClicked(id);
     setModalDeleteSaida(true);
   };
@@ -202,7 +226,6 @@ const TableGastosVariaveis: React.FC<DataProps> = ({
           )}
         </div>
       ) : (
-        // Versão Desktop: Tabela
         <div className="overflow-x-auto">
           <table className="w-full min-w-[100%] bg-white dark:bg-gray-900 border-b border-b-gray-200 dark:border-b-gray-700">
             <thead>
@@ -252,37 +275,10 @@ const TableGastosVariaveis: React.FC<DataProps> = ({
                       {formatCurrency(gasto.valor)}
                     </td>
                     <td className="p-1 text-[13px] pl-1 pr-1 flex justify-end text-center">
-                      <DropdownMenu
-                        open={openDropdown === gasto.id}
-                        onOpenChange={(isOpen) =>
-                          setOpenDropdown(isOpen ? gasto.id : null)
-                        }
-                      >
-                        <DropdownMenuTrigger asChild>
-                          <button
-                            className="bg-transparent rounded-md text-[10px]"
-                            onClick={() => setOpenDropdown(gasto.id)}
-                          >
-                            <Ellipsis />
-                          </button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                          <DropdownMenuGroup>
-                            <DropdownMenuItem
-                              onClick={() => handleDetalhesSaida(gasto.id)}
-                            >
-                              <FilePenLine />
-                              <span>Editar</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => handleDeleteSaida(gasto.id)}
-                            >
-                              <Trash2 />
-                              <span>Excluir</span>
-                            </DropdownMenuItem>
-                          </DropdownMenuGroup>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      <SimpleDropdown
+                        onEdit={() => handleDetalhesSaida(gasto.id)}
+                        onDelete={() => handleDeleteSaida(gasto.id)}
+                      />
                     </td>
                   </tr>
                 ))
