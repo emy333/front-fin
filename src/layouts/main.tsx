@@ -21,6 +21,7 @@ import {
   Banknote,
   Users,
   TrendingUp,
+  UserRoundPen,
 } from "lucide-react";
 
 interface MainLayoutProps {
@@ -32,6 +33,7 @@ const menuItems = [
   { title: "Entradas", url: "/entradas", icon: <TrendingUp size={18} /> },
   { title: "Saídas", url: "/saidas", icon: <Banknote size={18} /> },
   { title: "Credores", url: "/credores", icon: <Users size={18} /> },
+  { title: "Meu Perfil", url: "/perfil", icon: <UserRoundPen  size={18} /> },
 ];
 
 const MainLayout = ({ children }: MainLayoutProps) => {
