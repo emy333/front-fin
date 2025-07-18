@@ -25,7 +25,6 @@ Aplicação web para **gerenciamento de finanças pessoais**, com funcionalidade
 - [Zod](https://zod.dev/)
 - [Axios](https://axios-http.com/)
 - [React Router DOM](https://reactrouter.com/)
-- Context API para autenticação
 
 ---
 
